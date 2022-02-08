@@ -1,0 +1,16 @@
+import React from "react";
+
+interface AppContainerProps {}
+
+export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
+  return (
+    <div
+      style={{
+        margin: "0 auto 0 auto",
+        maxWidth: "1000px",
+      }}
+    >
+      {children}
+    </div>
+  );
+};
