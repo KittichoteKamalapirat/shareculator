@@ -30,7 +30,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
-table input {
+input {
   border: none;
   background-color: transparent;
   width: 100%;

@@ -1,27 +1,19 @@
-import { parse } from "path/posix";
-import { stringify } from "querystring";
-import React, { useEffect, useState } from "react";
-import { Button } from "./atoms/Button";
-import { HeaderRow } from "./atoms/HeaderRow";
-import {
-  Debt,
-  Expense,
-  MemberExpense,
-  Summary,
-  ToPayAndPaid,
-} from "./interface";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import DeleteIcon from "@mui/icons-material/Delete";
 import CameraIcon from "@mui/icons-material/Camera";
+import DeleteIcon from "@mui/icons-material/Delete";
 import PieChartIcon from "@mui/icons-material/PieChart";
-import { finalize, summarizeToBySpender } from "./utils";
-import { Flex } from "./layouts/Flex";
-import { FooterRow } from "./atoms/FooterRow";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import React, { useEffect, useState } from "react";
 import { BodyRow } from "./atoms/BodyRow";
+import { Button } from "./atoms/Button";
+import { FooterRow } from "./atoms/FooterRow";
+import { HeaderRow } from "./atoms/HeaderRow";
 import { OutlinedButton } from "./atoms/OutlinedButton";
-import { Card } from "./molecules/Card";
+import { SolidButton } from "./atoms/SolidButton";
+import { Expense, MemberExpense, Summary } from "./interface";
+import { Flex } from "./layouts/Flex";
 import { SummarySection } from "./templates/SummarySection";
+import { finalize, summarizeToBySpender } from "./utils";
 
 interface TableProps {}
 
@@ -191,7 +183,6 @@ export const Table: React.FC<TableProps> = ({}) => {
   }, [inputArray]);
 
   //handleFieldEnds
-
   //useEffect No.2
   //byMembers
   useEffect(() => {
@@ -254,9 +245,9 @@ export const Table: React.FC<TableProps> = ({}) => {
           ))}
           <th style={{ borderRight: "none" }}>
             {/* Control */}
-            <Button onClick={() => handleAddCol()} aria-label="Add item">
-              <AddCircleIcon style={{ fill: "white" }} /> Add member
-            </Button>
+            <SolidButton onClick={() => handleAddCol()} aria-label="Add item">
+              <AddCircleIcon style={{ fill: "white" }} /> member
+            </SolidButton>
           </th>
         </HeaderRow>
 
@@ -301,7 +292,7 @@ export const Table: React.FC<TableProps> = ({}) => {
 
                 <select
                   name="paidBy"
-                  className="w-11/12 "
+                  className="w-11/12 bg-transparent"
                   value={input.paidBy}
                   onChange={(event) => handleChangeRowInput(index, event)}
                 >
