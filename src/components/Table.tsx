@@ -1,6 +1,8 @@
 import { parse } from "path/posix";
 import { stringify } from "querystring";
 import React, { useEffect, useState } from "react";
+import { Button } from "./atoms/Button";
+import { HeaderRow } from "./atoms/HeaderRow";
 import {
   Debt,
   Expense,
@@ -8,8 +10,18 @@ import {
   Summary,
   ToPayAndPaid,
 } from "./interface";
-
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CameraIcon from "@mui/icons-material/Camera";
+import PieChartIcon from "@mui/icons-material/PieChart";
 import { finalize, summarizeToBySpender } from "./utils";
+import { Flex } from "./layouts/Flex";
+import { FooterRow } from "./atoms/FooterRow";
+import { BodyRow } from "./atoms/BodyRow";
+import { OutlinedButton } from "./atoms/OutlinedButton";
+import { Card } from "./molecules/Card";
+import { SummarySection } from "./templates/SummarySection";
 
 interface TableProps {}
 
@@ -34,17 +46,6 @@ export const Table: React.FC<TableProps> = ({}) => {
   const [byMembers, setByMembers] = useState<Map<string, number> | null>(null);
   const [summary, setSummary] = useState<Summary[] | null>(null);
 
-  console.log("inputArray");
-  console.log(inputArray);
-  console.log("summary");
-  console.log(summary);
-
-  console.log("bySpenders");
-  console.log(bySpenders);
-
-  console.log("byMembers");
-  console.log(byMembers);
-
   //handle field starts
   const handleChangeRowInput = (
     index: number,
@@ -53,8 +54,6 @@ export const Table: React.FC<TableProps> = ({}) => {
   ) => {
     const values: Expense[] = [...inputArray];
     //which index in the array values[0][name]
-    console.log("index", index);
-    console.log("subIndex", subIndex);
     if (
       !subIndex &&
       (event.target.name === "item" ||
@@ -97,6 +96,7 @@ export const Table: React.FC<TableProps> = ({}) => {
     values[index] = event.target.value;
 
     inputs.forEach((input) => (input.detail[index].name = event.target.value));
+
     setMemberArray(values);
   };
 
@@ -150,15 +150,15 @@ export const Table: React.FC<TableProps> = ({}) => {
     index: number,
     event: React.MouseEvent<HTMLElement>
   ) => {
-    console.log({ index });
     const values = [...inputArray];
-    const { isEquallySplit } = values[index];
+    const { isEquallySplit, isInvalid } = values[index];
 
     if (isEquallySplit) {
       //if isEqual => make it inequal
       values[index].detail.forEach((detail, subIndex) => {
         values[index].detail[subIndex].amount = 0;
       });
+      values[index].isInvalid = true;
     } else {
       const total = values[index].amount;
       //   const memLength = memberArray.length;
@@ -166,9 +166,8 @@ export const Table: React.FC<TableProps> = ({}) => {
       values[index].detail.forEach((detail, subIndex) => {
         values[index].detail[subIndex].amount = total / memLength;
       });
+      values[index].isInvalid = false;
     }
-
-    console.log({ values });
 
     values[index].isEquallySplit = !isEquallySplit;
     setInputArray(values);
@@ -206,16 +205,13 @@ export const Table: React.FC<TableProps> = ({}) => {
           const prevAmount = totalByMemberMap.get(name);
           const additional = detail.amount;
           const sum = prevAmount + additional;
-          console.log("prevAmount", prevAmount);
-          console.log("additional", additional);
-          console.log("sum", sum);
+
           totalByMemberMap.set(name, sum);
           continue;
         }
 
         totalByMemberMap.set(name, detail.amount);
       }
-      console.log({ totalByMemberMap });
       setByMembers(totalByMemberMap);
     });
   }, [inputArray]);
@@ -228,17 +224,17 @@ export const Table: React.FC<TableProps> = ({}) => {
   }, [bySpenders, byMembers]);
   return (
     <div style={{ width: "100%" }}>
-      <h2>Detailed Table</h2>
+      <h2 className="text-black text-3xl my-4">Detailed Table</h2>
 
-      <table className="table">
-        <tr>
+      <table className="table my-4">
+        <HeaderRow>
           <th>Item</th>
           <th>Total</th>
           <th>Paid By</th>
 
           {memberArray.map((name, index) => (
             <th key={index}>
-              <div style={{ display: "flex" }}>
+              <Flex>
                 <input
                   type="text"
                   value={name}
@@ -249,25 +245,25 @@ export const Table: React.FC<TableProps> = ({}) => {
 
                 <button
                   onClick={() => handleRemoveCol(index)}
-                  aria-label="Add item"
+                  aria-label="Remove item"
                 >
-                  -
+                  <RemoveCircleIcon style={{ fill: "white" }} />
                 </button>
-              </div>
+              </Flex>
             </th>
           ))}
-          <th>
+          <th style={{ borderRight: "none" }}>
             {/* Control */}
-            <button onClick={() => handleAddCol()} aria-label="Add item">
-              ➕ Add member
-            </button>
+            <Button onClick={() => handleAddCol()} aria-label="Add item">
+              <AddCircleIcon style={{ fill: "white" }} /> Add member
+            </Button>
           </th>
-        </tr>
+        </HeaderRow>
 
         {/* bodu */}
         <tbody>
-          {inputArray.map((input, index) => (
-            <tr key={index}>
+          {inputArray.map((input, index, array) => (
+            <BodyRow key={index} myKey={index} rowLength={array.length}>
               <td>
                 <input
                   type="text"
@@ -286,6 +282,12 @@ export const Table: React.FC<TableProps> = ({}) => {
                   name="amount"
                   onChange={(event) => handleChangeRowInput(index, event)}
                 />
+
+                {input.isInvalid ? (
+                  <div className="text-white  bg-red-600 text-center rounded">
+                    Invalid sum
+                  </div>
+                ) : null}
               </td>
 
               <td>
@@ -299,10 +301,13 @@ export const Table: React.FC<TableProps> = ({}) => {
 
                 <select
                   name="paidBy"
+                  className="w-11/12 "
                   value={input.paidBy}
                   onChange={(event) => handleChangeRowInput(index, event)}
                 >
-                  <option selected>Select</option>
+                  <option value="" selected>
+                    Select
+                  </option>
                   {memberArray.map((name) => (
                     <option value={name}>{name}</option>
                   ))}
@@ -313,7 +318,7 @@ export const Table: React.FC<TableProps> = ({}) => {
                 <td key={subIndex}>
                   <input
                     type="number"
-                    value={detail.amount.toFixed(2)}
+                    value={detail.amount}
                     name={detail.name}
                     //Shane, Joe,  Ant's Amount
                     onChange={(event) =>
@@ -323,89 +328,48 @@ export const Table: React.FC<TableProps> = ({}) => {
                 </td>
               ))}
 
-              <td>
+              <td style={{ borderRight: "none" }}>
                 <button
                   onClick={() => handleRemoveRow(index)}
                   aria-label="Remove item"
                 >
-                  -
+                  <DeleteIcon />
                 </button>
 
                 <button onClick={(e) => handleSplitEqually(index, e)}>
-                  {input.isEquallySplit ? "customize" : "split equally"}
+                  {input.isEquallySplit ? (
+                    <OutlinedButton>
+                      <PieChartIcon style={{ fill: "rgb(96 165 250)" }} />{" "}
+                      customize
+                    </OutlinedButton>
+                  ) : (
+                    <OutlinedButton>
+                      <CameraIcon style={{ fill: "rgb(96 165 250)" }} /> divide
+                    </OutlinedButton>
+                  )}
                 </button>
-
-                {input.isInvalid ? "invalid sum" : null}
               </td>
-            </tr>
+            </BodyRow>
           ))}
         </tbody>
 
         <tr>
-          <td colSpan={4 + memberArray.length}>
+          <td colSpan={4 + memberArray.length} style={{ borderRight: "none" }}>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <button
+              <Button
                 onClick={() => handleAddRow(inputArray.length)}
                 aria-label="Add item"
-                style={{ border: "none", backgroundColor: "transparent" }}
               >
                 + Add item
-              </button>
+              </Button>
             </div>
           </td>
         </tr>
-        <tfoot>
-          <td>Total to pay</td>
-          {/* combine all */}
-          <td>
-            {inputArray
-              .map((expense) => expense.amount)
-              .reduce((a, b) => {
-                return parseInt(a as any) + parseInt(b as any); // can't set to string and number
-              })
-              .toFixed(2)}
-          </td>
-          <td> All </td>
-
-          {byMembers &&
-            [...byMembers.keys()].map((key, index) => (
-              <td key={index}>{byMembers.get(key)?.toFixed(2)} </td>
-            ))}
-        </tfoot>
+        <FooterRow inputArray={inputArray} byMembers={byMembers} />
       </table>
-      {/* Table Header */}
-
-      {/* Table Body */}
-
       <div>{/* Last row to summarizeToBySpender */}</div>
-      <div>
-        <h2>Total by spenders</h2>
-        {bySpenders &&
-          [...bySpenders.keys()].map((key, index) => {
-            return (
-              <div key={index}>
-                {key} has spent {bySpenders.get(key)}
-              </div>
-            );
-          })}
-      </div>
 
-      <div>
-        <h2>Summary</h2>
-        <div>
-          {summary?.map((item, index) => (
-            <div key={index}>
-              <p>
-                <span style={{ fontWeight: "bold" }}>{item.payer}</span> pays{" "}
-                <span style={{ fontWeight: "bold" }}>{item.receiver}</span> :{" "}
-                <span style={{ fontWeight: "bold" }}>
-                  {item.amount.toFixed(2)}
-                </span>
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+      <SummarySection bySpenders={bySpenders} summary={summary} />
     </div>
   );
 };

@@ -7,6 +7,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
     <div
       style={{
         margin: "0 auto 0 auto",
+        marginTop: "50px",
         maxWidth: "1000px",
       }}
     >
