@@ -1,0 +1,21 @@
+table,
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+table input {
+  border: none;
+  width: 100%;
+  outline: none;
+}
+
+td {
+  width: 25%;
+}
