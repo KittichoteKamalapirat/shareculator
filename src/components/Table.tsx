@@ -8,8 +8,6 @@ import { BodyRow } from "./atoms/BodyRow";
 import { Button } from "./atoms/Button";
 import { FooterRow } from "./atoms/FooterRow";
 import { HeaderRow } from "./atoms/HeaderRow";
-import { OutlinedButton } from "./atoms/OutlinedButton";
-import { SolidButton } from "./atoms/SolidButton";
 import { Expense, MemberExpense, Summary } from "./interface";
 import { Flex } from "./layouts/Flex";
 import { SummarySection } from "./templates/SummarySection";
@@ -18,9 +16,8 @@ import { finalize, summarizeToBySpender } from "./utils";
 interface TableProps {}
 
 export const Table: React.FC<TableProps> = ({}) => {
-  const [bySpenders, setBySpenders] = useState<Map<string, number> | null>(
-    null
-  );
+  const [bySpenders, setBySpenders] =
+    useState<Map<string, number> | null>(null);
 
   const [inputArray, setInputArray] = useState<Expense[]>([
     {
@@ -32,8 +29,11 @@ export const Table: React.FC<TableProps> = ({}) => {
       detail: [{ name: "", amount: Math.round(0) }],
     },
   ]);
+  console.log({ inputArray });
 
   const [memberArray, setMemberArray] = useState<string[]>([""]);
+  console.log("length");
+  console.log(memberArray.length);
 
   const [byMembers, setByMembers] = useState<Map<string, number> | null>(null);
   const [summary, setSummary] = useState<Summary[] | null>(null);
@@ -215,7 +215,7 @@ export const Table: React.FC<TableProps> = ({}) => {
   }, [bySpenders, byMembers]);
   return (
     <div style={{ width: "100%" }}>
-      <h2 className="text-black text-3xl my-4">Detailed Table</h2>
+      <h2 className="text-black text-3xl my-4">Expenses </h2>
 
       <table className="table my-4">
         <HeaderRow>
@@ -245,9 +245,13 @@ export const Table: React.FC<TableProps> = ({}) => {
           ))}
           <th style={{ borderRight: "none" }}>
             {/* Control */}
-            <SolidButton onClick={() => handleAddCol()} aria-label="Add item">
+            <Button
+              variant="solid"
+              onClick={() => handleAddCol()}
+              aria-label="Add item"
+            >
               <AddCircleIcon style={{ fill: "white" }} /> member
-            </SolidButton>
+            </Button>
           </th>
         </HeaderRow>
 
@@ -323,14 +327,14 @@ export const Table: React.FC<TableProps> = ({}) => {
               <td style={{ borderRight: "none" }}>
                 <button onClick={(e) => handleSplitEqually(index, e)}>
                   {input.isEquallySplit ? (
-                    <OutlinedButton>
+                    <Button variant="outlined">
                       <PieChartIcon style={{ fill: "rgb(96 165 250)" }} />{" "}
                       customize
-                    </OutlinedButton>
+                    </Button>
                   ) : (
-                    <OutlinedButton>
+                    <Button variant="outlined">
                       <CameraIcon style={{ fill: "rgb(96 165 250)" }} /> divide
-                    </OutlinedButton>
+                    </Button>
                   )}
                 </button>
                 {index !== 0 ? (
@@ -351,6 +355,7 @@ export const Table: React.FC<TableProps> = ({}) => {
           <td colSpan={4 + memberArray.length} style={{ borderRight: "none" }}>
             <div style={{ display: "flex", justifyContent: "center" }}>
               <Button
+                variant="bottom-line"
                 onClick={() => handleAddRow(inputArray.length)}
                 aria-label="Add item"
               >
@@ -360,7 +365,23 @@ export const Table: React.FC<TableProps> = ({}) => {
           </td>
         </tr>
 
-        <FooterRow inputArray={inputArray} byMembers={byMembers} />
+        <FooterRow
+          inputArray={inputArray}
+          byMembers={byMembers}
+          memberArray={memberArray}
+          clearTable={() => {
+            setInputArray([
+              {
+                item: "",
+                amount: 0,
+                paidBy: "",
+                isEquallySplit: false,
+                isInvalid: false,
+                detail: [{ name: "", amount: Math.round(0) }],
+              },
+            ]);
+          }}
+        />
       </table>
       <div>{/* Last row to summarizeToBySpender */}</div>
 
