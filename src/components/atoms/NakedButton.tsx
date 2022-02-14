@@ -13,7 +13,7 @@ export const NakedButton: React.FC<NakedButtonProps> = ({
     <button
       onClick={onClick}
       {...props}
-      className="bg-transparent rounded  px-2 border-white border-2 "
+      className="bg-transparent rounded  px-2 border-white border-2  hover:bg-sky-100 "
     >
       {children}
     </button>

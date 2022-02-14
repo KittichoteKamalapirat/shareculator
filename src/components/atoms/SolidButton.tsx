@@ -10,7 +10,11 @@ export const SolidButton: React.FC<SolidButtonProps> = ({
   ...props
 }) => {
   return (
-    <button onClick={onClick} {...props} className="bg-green-400 rounded p-1 ">
+    <button
+      onClick={onClick}
+      {...props}
+      className="bg-green-500 rounded px-4 py-1 hover:bg-green-600 "
+    >
       {children}
     </button>
   );

@@ -292,7 +292,7 @@ export const Table: React.FC<TableProps> = ({}) => {
 
                 <select
                   name="paidBy"
-                  className="w-11/12 bg-transparent"
+                  className="w-11/12 bg-transparent text-right"
                   value={input.paidBy}
                   onChange={(event) => handleChangeRowInput(index, event)}
                 >
@@ -311,6 +311,7 @@ export const Table: React.FC<TableProps> = ({}) => {
                     type="number"
                     value={detail.amount}
                     name={detail.name}
+                    className={input.isInvalid ? "text-red-600" : ""}
                     //Shane, Joe,  Ant's Amount
                     onChange={(event) =>
                       handleChangeRowInput(index, event, subIndex)
@@ -320,13 +321,6 @@ export const Table: React.FC<TableProps> = ({}) => {
               ))}
 
               <td style={{ borderRight: "none" }}>
-                <button
-                  onClick={() => handleRemoveRow(index)}
-                  aria-label="Remove item"
-                >
-                  <DeleteIcon />
-                </button>
-
                 <button onClick={(e) => handleSplitEqually(index, e)}>
                   {input.isEquallySplit ? (
                     <OutlinedButton>
@@ -339,6 +333,15 @@ export const Table: React.FC<TableProps> = ({}) => {
                     </OutlinedButton>
                   )}
                 </button>
+                {index !== 0 ? (
+                  <button
+                    onClick={() => handleRemoveRow(index)}
+                    aria-label="Remove item"
+                    className="ml-4"
+                  >
+                    <DeleteIcon />
+                  </button>
+                ) : null}
               </td>
             </BodyRow>
           ))}
@@ -356,6 +359,7 @@ export const Table: React.FC<TableProps> = ({}) => {
             </div>
           </td>
         </tr>
+
         <FooterRow inputArray={inputArray} byMembers={byMembers} />
       </table>
       <div>{/* Last row to summarizeToBySpender */}</div>

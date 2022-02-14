@@ -10,7 +10,7 @@ export const BodyRow: React.FC<BodyRowProps> = ({
   rowLength,
   myKey,
 }) => {
-  return <tr className={myKey % 2 !== 0 ? "bg-blue-100" : ""}>{children}</tr>;
+  return <tr className={myKey % 2 !== 0 ? "bg-blue-50" : ""}>{children}</tr>;
 };
 
 // coud use rowLength - myKey

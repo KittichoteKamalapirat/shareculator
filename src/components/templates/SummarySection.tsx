@@ -13,7 +13,7 @@ export const SummarySection: React.FC<SummaryProps> = ({
   summary,
 }) => {
   return (
-    <Flex>
+    <div className="flex gap-4 mt-8">
       <Card title="Total by spenders">
         {bySpenders &&
           [...bySpenders.keys()].map((key, index) => {
@@ -38,6 +38,6 @@ export const SummarySection: React.FC<SummaryProps> = ({
           </div>
         ))}
       </Card>
-    </Flex>
+    </div>
   );
 };
