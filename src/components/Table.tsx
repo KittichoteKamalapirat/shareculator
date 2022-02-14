@@ -4,6 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PieChartIcon from "@mui/icons-material/PieChart";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { BodyRow } from "./atoms/BodyRow";
 import { Button } from "./atoms/Button";
 import { FooterRow } from "./atoms/FooterRow";
