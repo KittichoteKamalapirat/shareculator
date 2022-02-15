@@ -14,6 +14,8 @@ module.exports = {
           200: "#A4D3E5",
           100: "#D4EAF0",
         },
+        success: "#5AD863",
+        danger: "#E1938F",
       },
     },
   },

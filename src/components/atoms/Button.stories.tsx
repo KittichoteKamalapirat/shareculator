@@ -1,15 +1,19 @@
 import React from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { Button } from "../components/atoms/Button";
+import { Button } from "./Button";
+import { XCenter } from "../layouts/XCenter";
 
+//default export
 export default {
-  title: "Example/Button",
+  title: "Atoms/Button",
   component: Button,
+  // decorators: [(story) => <XCenter> {story()}</XCenter>], //local decorator
   argTypes: {
     children: {
       defaultValue: "Button Text",
     },
     backgroundColor: { control: "color" },
+    onClick: { action: "clicked" },
   },
 } as ComponentMeta<typeof Button>;
 
@@ -17,6 +21,7 @@ const Template: ComponentStory<typeof Button> = (args) => (
   <Button {...args}>{args.children}</Button>
 );
 
+//named export -> each button in the story
 export const Solid = Template.bind({});
 Solid.args = {
   variant: "solid", //also default

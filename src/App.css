@@ -1,15 +1,9 @@
-* {
-  /* color: #3b3b3b; */
-  /* color: #525252; */
-
-  /* color: #696969; */
-  /* color: #808080; */
-  /* #C5C5C5 */
-}
+/* make footer bottom eve nless content*/
 
 body {
   background-color: rgb(255, 254, 252);
 }
+
 /* table, */
 th,
 /* tfoot, */
