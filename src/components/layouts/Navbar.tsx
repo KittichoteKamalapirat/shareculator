@@ -10,7 +10,7 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
       <div className="container flex flex-wrap justify-between items-center mx-auto">
         <Link to="/">
           <div className="flex items-center flex-shrink-0 mr-6 cursor-pointer">
-            <CalculateIcon />
+            <CalculateIcon style={{ fill: "#3b82f6" }} fontSize="large" />
             <span className="font-semibold text-xl tracking-tight">
               Shareculator
             </span>
@@ -51,17 +51,20 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
         </button>
         <div className="hidden w-full md:block md:w-auto" id="mobile-menu">
           <ul className="flex items-center flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
-            <li>
+            {/* <li>
               <a
-                href="#"
+                href="/about"
                 className="block  pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 About
               </a>
-            </li>
+            </li> */}
             <li>
               <a
-                href="#"
+                href="mailto: kittichoteshane@gmail.com"
+                type="button"
+                target="_blank"
+                rel="noreferrer"
                 className="block  pr-4 pl-3 text-gray-700 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
               >
                 Contact

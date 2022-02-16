@@ -14,7 +14,7 @@ export const SummarySection: React.FC<SummaryProps> = ({
   memberArray,
 }) => {
   return (
-    <div className="flex gap-4 my-10">
+    <div className="flex flex-col lg:flex-row gap-4 my-10 mx-2">
       <Card title="Total by spenders">
         {bySpenders.map((amount, index) => {
           return (
@@ -39,7 +39,7 @@ export const SummarySection: React.FC<SummaryProps> = ({
               :{" "}
               <span style={{ fontWeight: "bold" }}>
                 {/* {item.amount.toFixed(2)} */}
-                {item.amount}
+                {item.amount.toFixed(2)}
               </span>
             </p>
           </div>

@@ -1,17 +1,24 @@
 /* make footer bottom eve nless content*/
 
+/* * {
+  box-sizing: border-box;
+} */
+html,
+body {
+  overflow-x: hidden;
+}
 body {
   background-color: rgb(255, 254, 252);
 }
 
 /* table, */
 th,
-/* tfoot, */
 td {
   /* border-left: 0.5px solid #c5c5c5; */
   /* border-right: 0.5px solid #c5c5c5; */
   border-collapse: collapse;
   padding: 10px 10px;
+  white-space: nowrap;
 }
 th {
   border-left: 0.5px solid #c5c5c5;
@@ -19,8 +26,8 @@ th {
 }
 
 table {
-  table-layout: fixed;
-  width: 100%;
+  /* table-layout: fixed; */
+  /* overflow: auto; */
 }
 
 input::-webkit-outer-spin-button,
@@ -33,6 +40,9 @@ input {
   border-bottom: 0.5px solid #c5c5c5;
   background-color: transparent;
   width: 100%;
+  /* white-space: nowrap; */
+  /* max-width: 100%; */
+
   outline: none;
 }
 

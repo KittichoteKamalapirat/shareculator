@@ -15,19 +15,21 @@ import { finalize, summarizeToBySpender } from "./utils";
 
 interface TableProps {}
 
-export const Table: React.FC<TableProps> = ({}) => {
-  const [memberArray, setMemberArray] = useState<string[]>([""]);
+const initialInput = [...Array(5)].map((num) => {
+  return {
+    item: "",
+    amount: 0,
+    paidByIndex: -1,
+    isEquallySplit: false,
+    isInvalid: false,
+    detail: [0, 0, 0],
+  };
+});
 
-  const [inputArray, setInputArray] = useState<Expense[]>([
-    {
-      item: "",
-      amount: 0,
-      paidByIndex: -1,
-      isEquallySplit: false,
-      isInvalid: false,
-      detail: [0],
-    },
-  ]);
+export const Table: React.FC<TableProps> = ({}) => {
+  const [memberArray, setMemberArray] = useState<string[]>(["", "", ""]);
+
+  const [inputArray, setInputArray] = useState<Expense[]>(initialInput);
 
   const [bySpenders, setBySpenders] = useState<number[]>([0]);
 
@@ -150,14 +152,19 @@ export const Table: React.FC<TableProps> = ({}) => {
       values[index].detail.forEach((detail, subIndex) => {
         values[index].detail[subIndex] = 0;
       });
-      values[index].isInvalid = true;
     } else {
       const total = values[index].amount;
-      //   const memLength = memberArray.length;
       const memLength = values[index].detail.length;
       values[index].detail.forEach((detail, subIndex) => {
         values[index].detail[subIndex] = total / memLength;
       });
+    }
+
+    const inputSum = values[index].detail.reduce((a, b) => a + b);
+    const amount = parseInt(values[index].amount as any); //amount is string
+    if (inputSum !== amount) {
+      values[index].isInvalid = true;
+    } else {
       values[index].isInvalid = false;
     }
 
@@ -205,170 +212,173 @@ export const Table: React.FC<TableProps> = ({}) => {
     }
   }, [bySpenders, byMembers]);
   return (
-    <div style={{ width: "100%" }}>
-      <h2 className="text-black text-3xl my-4">Expenses </h2>
+    <div className="w-full ">
+      <h2 className="text-black text-3xl my-4 mx-2">Expenses </h2>
+      <div className="overflow-x-auto">
+        <table className=" table-fixed my-4 mx-2 w-full min-w-max ">
+          <HeaderRow>
+            <th>Item</th>
+            <th>Amount</th>
+            <th className="w-max">Paid By</th>
 
-      <table className="table my-4">
-        <HeaderRow>
-          <th>Item</th>
-          <th>Amount</th>
-          <th>Paid By</th>
-
-          {memberArray.map((name, index) => (
-            <th key={index}>
-              <Flex>
-                <input
-                  type="text"
-                  value={name}
-                  placeholder="Add Name"
-                  name="memberName"
-                  onChange={(event) => handleChangeMemberArray(index, event)}
-                />
-
-                <button
-                  onClick={() => handleRemoveCol(index)}
-                  aria-label="Remove item"
-                >
-                  <RemoveCircleIcon style={{ fill: "white" }} />
-                </button>
-              </Flex>
-            </th>
-          ))}
-          <th style={{ borderRight: "none" }}>
-            {/* Control */}
-            <Button
-              variant="solid"
-              onClick={() => handleAddCol()}
-              aria-label="Add item"
-            >
-              <AddCircleIcon style={{ fill: "white" }} /> member
-            </Button>
-          </th>
-        </HeaderRow>
-
-        {/* table body */}
-        <tbody>
-          {inputArray.map((input, index, array) => (
-            <BodyRow key={index} myKey={index} rowLength={array.length}>
-              <td>
-                <input
-                  type="text"
-                  placeholder="What you spent for"
-                  value={input.item}
-                  name="item"
-                  onChange={(event) => handleChangeRowInput(index, event)}
-                />
-              </td>
-
-              <td>
-                <input
-                  type="number"
-                  placeholder="Total amount"
-                  value={parseInt(input.amount as any)}
-                  name="amount"
-                  onChange={(event) => handleChangeRowInput(index, event)}
-                />
-
-                {input.isInvalid ? (
-                  <div className="text-red-500 border-2 rounded m-1 border-red-500 text-center absolute">
-                    Invalid sum
-                  </div>
-                ) : null}
-              </td>
-
-              <td>
-                <select
-                  name="paidByIndex"
-                  className="w-11/12 bg-transparent text-right"
-                  value={input.paidByIndex}
-                  onChange={(event) => handleChangeRowInput(index, event)}
-                >
-                  <option value={-1} selected>
-                    Select
-                  </option>
-                  {memberArray.map((name, index) => (
-                    <option value={index}>{name}</option>
-                  ))}
-                </select>
-              </td>
-
-              {input.detail.map((detail, detailIndex) => (
-                <td key={detailIndex}>
+            {memberArray.map((name, index) => (
+              <th key={index}>
+                <div className="flex flex-col md:flex-rol">
                   <input
-                    type="number"
-                    value={detail}
-                    // name={detail}
-                    className={input.isInvalid ? "text-red-600" : ""}
-                    //Shane, Joe,  Ant's Amount
-                    onChange={(event) =>
-                      handleChangeRowInput(index, event, detailIndex)
-                    }
+                    type="text"
+                    value={name}
+                    placeholder="Add Name"
+                    name="memberName"
+                    onChange={(event) => handleChangeMemberArray(index, event)}
+                  />
+
+                  <Button
+                    variant="naked"
+                    onClick={() => handleRemoveCol(index)}
+                    aria-label="Remove item"
+                  >
+                    <DeleteIcon style={{ fill: "white" }} />
+                  </Button>
+                </div>
+              </th>
+            ))}
+            <th style={{ borderRight: "none" }}>
+              {/* Control */}
+              <Button
+                variant="solid"
+                onClick={() => handleAddCol()}
+                aria-label="Add item"
+              >
+                <AddCircleIcon style={{ fill: "white" }} /> member
+              </Button>
+            </th>
+          </HeaderRow>
+
+          {/* table body */}
+          <tbody>
+            {inputArray.map((input, index, array) => (
+              <BodyRow key={index} myKey={index} rowLength={array.length}>
+                <td>
+                  <input
+                    type="text"
+                    placeholder="What you spent for"
+                    value={input.item}
+                    name="item"
+                    onChange={(event) => handleChangeRowInput(index, event)}
                   />
                 </td>
-              ))}
 
-              <td style={{ borderRight: "none" }}>
-                <button onClick={(e) => handleSplitEqually(index, e)}>
+                <td>
+                  <input
+                    type="number"
+                    placeholder="Total amount"
+                    value={parseInt(input.amount as any)}
+                    name="amount"
+                    onChange={(event) => handleChangeRowInput(index, event)}
+                  />
+
+                  {input.isInvalid ? (
+                    <div className="text-red-500 border-2 rounded m-1 border-red-500 text-center absolute">
+                      Invalid sum
+                    </div>
+                  ) : null}
+                </td>
+
+                <td>
+                  <select
+                    name="paidByIndex"
+                    className="w-11/12 bg-transparent text-right"
+                    value={input.paidByIndex}
+                    onChange={(event) => handleChangeRowInput(index, event)}
+                  >
+                    <option value={-1} selected>
+                      Select
+                    </option>
+                    {memberArray.map((name, index) => (
+                      <option value={index}>{name}</option>
+                    ))}
+                  </select>
+                </td>
+
+                {input.detail.map((detail, detailIndex) => (
+                  <td key={detailIndex}>
+                    <input
+                      type="number"
+                      value={detail.toFixed(2)}
+                      // name={detail}
+                      className={input.isInvalid ? "text-red-600" : ""}
+                      //Shane, Joe,  Ant's Amount
+                      onChange={(event) =>
+                        handleChangeRowInput(index, event, detailIndex)
+                      }
+                    />
+                  </td>
+                ))}
+
+                <td style={{ borderRight: "none" }}>
+                  {/* <button onClick={(e) => handleSplitEqually(index, e)}> */}
                   {input.isEquallySplit ? (
-                    <Button variant="outlined">
+                    <Button
+                      variant="outlined"
+                      onClick={(e) => handleSplitEqually(index, e)}
+                    >
                       <PieChartIcon style={{ fill: "rgb(96 165 250)" }} />{" "}
                       customize
                     </Button>
                   ) : (
-                    <Button variant="outlined">
+                    <Button
+                      variant="outlined"
+                      onClick={(e) => handleSplitEqually(index, e)}
+                    >
                       <CameraIcon style={{ fill: "rgb(96 165 250)" }} /> divide
                     </Button>
                   )}
-                </button>
-                {index !== 0 ? (
-                  <button
-                    onClick={() => handleRemoveRow(index)}
-                    aria-label="Remove item"
-                    className="ml-4"
-                  >
-                    <DeleteIcon />
-                  </button>
-                ) : null}
-              </td>
-            </BodyRow>
-          ))}
-        </tbody>
+                  {/* </button> */}
+                  {index !== 0 ? (
+                    <Button
+                      variant="naked"
+                      onClick={() => handleRemoveRow(index)}
+                      aria-label="Remove item"
+                      className="ml-4"
+                    >
+                      <DeleteIcon style={{ fill: "gray" }} />
+                    </Button>
+                  ) : null}
+                </td>
+              </BodyRow>
+            ))}
+          </tbody>
 
-        <tr>
-          <td colSpan={4 + memberArray.length} style={{ borderRight: "none" }}>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <Button
-                variant="bottom-line"
-                onClick={() => handleAddRow(inputArray.length)}
-                aria-label="Add item"
-              >
-                + Add item
-              </Button>
-            </div>
-          </td>
-        </tr>
+          <tr>
+            <td
+              colSpan={4 + memberArray.length}
+              style={{ borderRight: "none" }}
+            >
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  variant="bottom-line"
+                  onClick={() => handleAddRow(inputArray.length)}
+                  aria-label="Add item"
+                >
+                  + Add item
+                </Button>
+              </div>
+            </td>
+          </tr>
 
-        <FooterRow
-          inputArray={inputArray}
-          byMembers={byMembers}
-          memberArray={memberArray}
-          recalculate={() => setInputArray(inputArray)}
-          clearTable={() => {
-            setMemberArray([""]);
-            setByMembers([0]);
-            setInputArray([
-              {
-                item: "",
-                amount: 0,
-                paidByIndex: -1,
-                isEquallySplit: false,
-                isInvalid: false,
-                detail: [0],
-              },
-            ]);
-          }}
-        />
-      </table>
+          <FooterRow
+            inputArray={inputArray}
+            byMembers={byMembers}
+            memberArray={memberArray}
+            recalculate={() => setInputArray(inputArray)}
+            clearTable={() => {
+              setMemberArray([...Array(memberArray.length)].map((num) => ""));
+              setByMembers([...Array(memberArray.length)].map((num) => 0));
+              setInputArray(initialInput);
+            }}
+          />
+        </table>
+      </div>
       <div>{/* Last row to summarizeToBySpender */}</div>
 
       <SummarySection
