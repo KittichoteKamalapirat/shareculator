@@ -1,29 +1,25 @@
-import { traceDeprecation } from "process";
 import React from "react";
 import { Expense } from "../interface";
+import { Flex } from "../layouts/Flex";
 import { Button } from "./Button";
 
 interface FooterRowProps {
   inputArray: Expense[];
-  byMembers: Map<string, number> | null;
+  byMembers: number[];
   memberArray: string[];
   clearTable: () => void;
+  recalculate: () => void;
 }
 
 export const FooterRow: React.FC<FooterRowProps> = ({
   inputArray,
   byMembers,
   memberArray,
+  recalculate,
   clearTable,
 }) => {
-  console.log({ inputArray });
-  if (byMembers) {
-    console.log("member array length");
-    console.log([...byMembers.keys()].length);
-  }
-
   return (
-    <tfoot className="bg-blue-500 border-r-0">
+    <tfoot className="bg-blue-500 border-r-0 text-right">
       {" "}
       <td>Total to pay</td>
       {/* combine all */}
@@ -40,25 +36,26 @@ export const FooterRow: React.FC<FooterRowProps> = ({
         )}
       </td>
       <td> All </td>
-      {byMembers &&
-        [...byMembers.keys()].map((key, index) => (
-          <td key={index}>{byMembers.get(key)?.toFixed(2)} </td>
-        ))}
+      {byMembers.map((amount, index) => (
+        // <td key={index}>{amount.toFixed(2)} </td>
+        <td key={index}>{amount} </td>
+      ))}
       {/* below code is for fix bugs  */}
-      {byMembers
-        ? [...Array(memberArray.length - [...byMembers.keys()].length)].map(
-            (i) => <td>0.00</td>
-          )
-        : null}
       <td style={{ backgroundColor: "white" }}>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            clearTable();
-          }}
-        >
-          Clear table
-        </Button>
+        <Flex>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              clearTable();
+            }}
+          >
+            Clear
+          </Button>
+
+          <Button variant="outlined" onClick={() => recalculate()}>
+            Calculate
+          </Button>
+        </Flex>
       </td>
     </tfoot>
   );

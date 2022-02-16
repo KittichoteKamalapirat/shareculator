@@ -1,38 +1,45 @@
 import React from "react";
 import { Summary } from "../interface";
-import { Flex } from "../layouts/Flex";
 import { Card } from "../molecules/Card";
 
 interface SummaryProps {
-  bySpenders: Map<string, number> | null;
+  bySpenders: number[];
   summary: Summary[] | null;
+  memberArray: string[];
 }
 
 export const SummarySection: React.FC<SummaryProps> = ({
   bySpenders,
   summary,
+  memberArray,
 }) => {
   return (
-    <div className="flex gap-4 mt-8">
+    <div className="flex gap-4 my-10">
       <Card title="Total by spenders">
-        {bySpenders &&
-          [...bySpenders.keys()].map((key, index) => {
-            return (
-              <div key={index}>
-                {key} has spent {bySpenders.get(key)}
-              </div>
-            );
-          })}
+        {bySpenders.map((amount, index) => {
+          return (
+            <div key={index}>
+              {memberArray[index]} has spent {bySpenders[index]}
+            </div>
+          );
+        })}
       </Card>
 
       <Card title="Summary">
         {summary?.map((item, index) => (
           <div key={index}>
             <p>
-              <span style={{ fontWeight: "bold" }}>{item.payer}</span> pays{" "}
-              <span style={{ fontWeight: "bold" }}>{item.receiver}</span> :{" "}
               <span style={{ fontWeight: "bold" }}>
-                {item.amount.toFixed(2)}
+                {memberArray[item.payerIndex]}
+              </span>{" "}
+              pays{" "}
+              <span style={{ fontWeight: "bold" }}>
+                {memberArray[item.receiverIndex]}
+              </span>{" "}
+              :{" "}
+              <span style={{ fontWeight: "bold" }}>
+                {/* {item.amount.toFixed(2)} */}
+                {item.amount}
               </span>
             </p>
           </div>

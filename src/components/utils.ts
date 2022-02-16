@@ -1,46 +1,46 @@
-import { Expense, Summary, ToPayAndPaid } from "./interface";
+import { Expense, Spender, Summary, ToPayAndPaid } from "./interface";
 
-export const summarizeToBySpender = (expenseArray: Expense[]) => {
-  const map = new Map<string, number>();
+export const summarizeToBySpender = (
+  expenseArray: Expense[],
+  memberArray: string[]
+) => {
+  const result: number[] = memberArray.map((member) => 0);
+  // [{nameIndex: 0, paidAmount: 20},{nameIndex: 1, paidAmount: 20}]
   for (const expense of expenseArray) {
-    const spender = expense.paidBy;
-    console.log("expense amount");
-    console.log(expense.amount);
-    if (map.has(spender)) {
-      map.set(
-        spender,
-        parseInt(map.get(spender) as any) + parseInt(expense.amount as any)
-      );
-      continue;
-    }
-    map.set(spender, parseInt(expense.amount as any));
+    result[expense.paidByIndex] += parseInt(expense.amount as any);
   }
-  return map;
+  return result;
 };
 
 export const finalize = (
-  bySpenders: Map<string, number>,
-  byMembers: Map<string, number>
+  bySpenders: number[], //[{nameIndex: 0, amountPaid: 30}, {nameIndex: 1, amountPaid: 30}]
+  byMembers: number[] //[30,10,30]
 ) => {
   const result: Summary[] = [];
 
   //reformat
 
-  const toPayAndPaidArray: ToPayAndPaid[] = [...byMembers.keys()].map(
-    (key, index) => {
-      const memberName = key;
-      const toPayAmount = byMembers.get(key)!;
-      const paidAmount = bySpenders.get(memberName) || 0;
-      const debt = toPayAmount - paidAmount;
-      const toPayAndPaid: ToPayAndPaid = {
-        name: memberName,
-        toPay: toPayAmount,
-        paid: paidAmount,
-        debt,
-      };
-      return toPayAndPaid;
-    }
-  );
+  // for(let i = 0 ; i < bySpenders.length ; i++){
+
+  // }
+
+  console.log({ bySpenders });
+  console.log({ byMembers });
+
+  const toPayAndPaidArray: ToPayAndPaid[] = byMembers.map((amount, index) => {
+    console.log({ amount });
+    console.log("index", bySpenders[index]);
+    const debt = amount - bySpenders[index];
+    console.log({ debt });
+    const toPayAndPaid: ToPayAndPaid = {
+      memberIndex: index,
+      toPay: amount,
+      paid: bySpenders[index],
+      debt,
+    };
+    console.log({ toPayAndPaid });
+    return toPayAndPaid;
+  });
 
   //   { name: Shane, toPay: 33.33, paid: 100, debt: 33.33-100 }
   //   { name: Ant, toPay: 33.33, paid: 0, debt: 33.33-0 }
@@ -56,13 +56,14 @@ export const finalize = (
 
   //thirdly, max debtor => Shane
   //secondly, max lender => Shane
-  console.log({ toPayAndPaidArray });
 
   //who pays who algorithm
   let i = 0;
 
   //> 0 -> give bugs
+  console.log({ toPayAndPaidArray });
   while (toPayAndPaidArray.length > 1) {
+    console.log({ i });
     i++;
 
     //max Debtor and maxLender could be the same person when Shane (as a lender) does not get 100 returned, 99.99
@@ -81,32 +82,33 @@ export const finalize = (
     });
 
     const lenderIndex = toPayAndPaidArray.findIndex(
-      (object) => object.name === maxLender.name
+      (object) => object.memberIndex === maxLender.memberIndex
     );
     const debtorIndex = toPayAndPaidArray.findIndex(
-      (object) => object.name === maxDebtor.name
+      (object) => object.memberIndex === maxDebtor.memberIndex
     );
 
     const debtPlusLent = maxDebtor.debt + maxLender.debt;
 
     let summaryItem: Summary = {
-      payer: maxDebtor.name,
-      receiver: maxLender.name,
+      payerIndex: maxDebtor.memberIndex,
+      receiverIndex: maxLender.memberIndex,
       amount: 0,
     };
 
+    console.log({ maxDebtor });
+    console.log({ maxLender });
+
     //Lent a lot
     if (debtPlusLent < 0) {
-      console.log("<0");
+      console.log("lent alot");
       //remove borrower
 
       const prevDebt = toPayAndPaidArray[lenderIndex].debt; //- 385
       const returnAmount = maxDebtor.debt; //215
       toPayAndPaidArray[lenderIndex].debt = prevDebt + returnAmount; // - 385 + 215
-
-      //add to result
       summaryItem.amount = returnAmount;
-      console.log({ returnAmount });
+      //add to result
 
       result.push(summaryItem);
 
@@ -114,23 +116,19 @@ export const finalize = (
 
       //borrowed alot
     } else if (debtPlusLent > 0) {
-      console.log(">0");
-
       //remove lender
+      console.log("borrowed alot");
 
       const prevDebt = toPayAndPaidArray[debtorIndex].debt; //120
       const returnAmount = maxLender.debt; // - 90
       toPayAndPaidArray[debtorIndex].debt = prevDebt + returnAmount; //30
       summaryItem.amount = -returnAmount;
-      console.log({ maxDebtor });
-      console.log({ maxLender });
-      console.log({ returnAmount });
 
       result.push(summaryItem);
       toPayAndPaidArray.splice(lenderIndex, 1);
       //same amount
     } else {
-      console.log("=0");
+      console.log("borrow = lent");
       const removeIndex = [lenderIndex, debtorIndex];
       //sort from large to small
 
@@ -142,5 +140,7 @@ export const finalize = (
       result.push(summaryItem);
     }
   }
+
+  console.log({ result });
   return result;
 };

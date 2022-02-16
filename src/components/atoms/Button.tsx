@@ -20,8 +20,8 @@ export const Button: React.FC<ButtonProps> = ({
   let style;
   switch (variant) {
     case "solid":
-      style = `bg-green-500
-      } rounded px-2 py-1 hover:bg-green-600 text-white`;
+      style = `bg-${color ? color : "green-500"}
+       rounded px-2 py-1 hover:bg-green-600 text-white`;
       break;
     case "bottom-line":
       style = `bg-transparent border-t-0 border-x-0 border-b-blue-700 px-2 py-1 border-slate-400 border-4 hover:bg-sky-100   rounded-t`;

@@ -4,12 +4,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PieChartIcon from "@mui/icons-material/PieChart";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { BodyRow } from "./atoms/BodyRow";
 import { Button } from "./atoms/Button";
 import { FooterRow } from "./atoms/FooterRow";
 import { HeaderRow } from "./atoms/HeaderRow";
-import { Expense, MemberExpense, Summary } from "./interface";
+import { Expense, Summary } from "./interface";
 import { Flex } from "./layouts/Flex";
 import { SummarySection } from "./templates/SummarySection";
 import { finalize, summarizeToBySpender } from "./utils";
@@ -17,64 +16,60 @@ import { finalize, summarizeToBySpender } from "./utils";
 interface TableProps {}
 
 export const Table: React.FC<TableProps> = ({}) => {
-  const [bySpenders, setBySpenders] =
-    useState<Map<string, number> | null>(null);
+  const [memberArray, setMemberArray] = useState<string[]>([""]);
 
   const [inputArray, setInputArray] = useState<Expense[]>([
     {
       item: "",
       amount: 0,
-      paidBy: "",
+      paidByIndex: -1,
       isEquallySplit: false,
       isInvalid: false,
-      detail: [{ name: "", amount: Math.round(0) }],
+      detail: [0],
     },
   ]);
-  console.log({ inputArray });
 
-  const [memberArray, setMemberArray] = useState<string[]>([""]);
-  console.log("length");
-  console.log(memberArray.length);
+  const [bySpenders, setBySpenders] = useState<number[]>([0]);
 
-  const [byMembers, setByMembers] = useState<Map<string, number> | null>(null);
-  const [summary, setSummary] = useState<Summary[] | null>(null);
+  const [byMembers, setByMembers] = useState<number[]>([0]);
+  const [summary, setSummary] = useState<Summary[]>([]);
 
   //handle field starts
   const handleChangeRowInput = (
     index: number,
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    subIndex?: number
+    detailIndex?: number
   ) => {
     const values: Expense[] = [...inputArray];
     //which index in the array values[0][name]
-    if (
-      !subIndex &&
-      (event.target.name === "item" ||
-        event.target.name === "paidBy" ||
-        event.target.name === "amount")
-    ) {
-      // if (event.target.name === ("item" || "total" || "paidBy")) {\
-      values[index][event.target.name] = event.target.value as never;
+    if (!detailIndex) {
+      if (
+        values[index][event.target.name as "paidByIndex"] ===
+        ("paidByIndex" as never)
+      ) {
+        values[index].paidByIndex = parseInt(event.target.value);
+      } else {
+        values[index][event.target.name as "item" | "amount"] = event.target
+          .value as never;
+      }
     } else {
       //name = amount or name
       //detail[0][amount]
       //noww name is detail[0]['shane']
       //index indicates Shane, or Ant
 
-      values[index].detail[subIndex as number].amount = parseInt(
+      values[index].detail[detailIndex as number] = parseInt(
         event.target.value
       );
-      values[index].detail[subIndex as number].name = memberArray[index];
+      // values[index].detail[detailIndex as number].name = memberArray[index];
+    }
 
-      const inputSum = values[index].detail
-        .map((detail) => detail.amount)
-        .reduce((a, b) => a + b);
-      const total = parseInt(values[index].amount as any); //amount is string
-      if (inputSum !== total) {
-        values[index].isInvalid = true;
-      } else {
-        values[index].isInvalid = false;
-      }
+    const inputSum = values[index].detail.reduce((a, b) => a + b);
+    const amount = parseInt(values[index].amount as any); //amount is string
+    if (inputSum !== amount) {
+      values[index].isInvalid = true;
+    } else {
+      values[index].isInvalid = false;
     }
 
     setInputArray(values);
@@ -84,13 +79,13 @@ export const Table: React.FC<TableProps> = ({}) => {
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const values: string[] = [...memberArray];
+    const memArr: string[] = [...memberArray];
     const inputs = [...inputArray];
-    values[index] = event.target.value;
+    memArr[index] = event.target.value;
 
-    inputs.forEach((input) => (input.detail[index].name = event.target.value));
+    inputs.forEach((input) => (input.detail[index] = 0));
 
-    setMemberArray(values);
+    setMemberArray(memArr);
   };
 
   const handleAddRow = (index: any) => {
@@ -99,12 +94,13 @@ export const Table: React.FC<TableProps> = ({}) => {
     values.splice(index + 1, 0, {
       item: "",
       amount: 0,
-      paidBy: "",
+      paidByIndex: -1,
       isEquallySplit: false,
       isInvalid: false,
-      detail: memberArray.map((member) => {
-        return { name: member, amount: Math.round(0) };
-      }),
+      // detail: memberArray.map((member) => {
+      //   return { name: member, amount: Math.round(0) };
+      // }),
+      detail: memberArray.map((member) => 0),
     });
 
     setInputArray(values);
@@ -114,9 +110,9 @@ export const Table: React.FC<TableProps> = ({}) => {
     const expenseArray = [...inputArray];
     const memberNames = [...memberArray];
 
-    const newCol: MemberExpense = { name: "", amount: 0 };
+    //add a new amount to detail array
     expenseArray.forEach((expense) => {
-      expense.detail.splice(expense.detail.length, 0, newCol);
+      expense.detail.splice(expense.detail.length, 0, 0);
     });
 
     memberNames.push("");
@@ -128,15 +124,18 @@ export const Table: React.FC<TableProps> = ({}) => {
   const handleRemoveCol = (index: number) => {
     const expenseArray = [...inputArray];
     const memberNames = [...memberArray];
+    const byMemberArray = [...byMembers];
 
     expenseArray.forEach((expense) => {
       expense.detail.splice(index, 1);
     });
+    byMemberArray.splice(index, 1);
 
-    memberNames.splice(index, 1);
+    memberNames.splice(index, 1); //remove
 
     setInputArray(expenseArray);
     setMemberArray(memberNames);
+    setByMembers(byMemberArray);
   };
 
   const handleSplitEqually = (
@@ -149,7 +148,7 @@ export const Table: React.FC<TableProps> = ({}) => {
     if (isEquallySplit) {
       //if isEqual => make it inequal
       values[index].detail.forEach((detail, subIndex) => {
-        values[index].detail[subIndex].amount = 0;
+        values[index].detail[subIndex] = 0;
       });
       values[index].isInvalid = true;
     } else {
@@ -157,7 +156,7 @@ export const Table: React.FC<TableProps> = ({}) => {
       //   const memLength = memberArray.length;
       const memLength = values[index].detail.length;
       values[index].detail.forEach((detail, subIndex) => {
-        values[index].detail[subIndex].amount = total / memLength;
+        values[index].detail[subIndex] = total / memLength;
       });
       values[index].isInvalid = false;
     }
@@ -179,7 +178,7 @@ export const Table: React.FC<TableProps> = ({}) => {
   //useEffect No.1
 
   useEffect(() => {
-    const result = summarizeToBySpender(inputArray);
+    const result = summarizeToBySpender(inputArray, memberArray);
     setBySpenders(result);
   }, [inputArray]);
 
@@ -187,25 +186,16 @@ export const Table: React.FC<TableProps> = ({}) => {
   //useEffect No.2
   //byMembers
   useEffect(() => {
-    const totalByMemberMap = new Map();
+    const inputs = [...inputArray];
+    const byMemberArray: number[] = memberArray.map((member) => 0);
     //map through Shane
 
-    inputArray.map((expense) => {
-      for (const detail of expense.detail) {
-        const name = detail.name;
-        if (totalByMemberMap.has(name)) {
-          const prevAmount = totalByMemberMap.get(name);
-          const additional = detail.amount;
-          const sum = prevAmount + additional;
-
-          totalByMemberMap.set(name, sum);
-          continue;
-        }
-
-        totalByMemberMap.set(name, detail.amount);
-      }
-      setByMembers(totalByMemberMap);
+    inputs.forEach((input, index) => {
+      input.detail.forEach((amount, subIndex) => {
+        byMemberArray[subIndex] += amount;
+      });
     });
+    setByMembers(byMemberArray);
   }, [inputArray]);
 
   //useEffect No.3
@@ -221,7 +211,7 @@ export const Table: React.FC<TableProps> = ({}) => {
       <table className="table my-4">
         <HeaderRow>
           <th>Item</th>
-          <th>Total</th>
+          <th>Amount</th>
           <th>Paid By</th>
 
           {memberArray.map((name, index) => (
@@ -256,7 +246,7 @@ export const Table: React.FC<TableProps> = ({}) => {
           </th>
         </HeaderRow>
 
-        {/* bodu */}
+        {/* table body */}
         <tbody>
           {inputArray.map((input, index, array) => (
             <BodyRow key={index} myKey={index} rowLength={array.length}>
@@ -280,46 +270,38 @@ export const Table: React.FC<TableProps> = ({}) => {
                 />
 
                 {input.isInvalid ? (
-                  <div className="text-white  bg-red-600 text-center rounded">
+                  <div className="text-red-500 border-2 rounded m-1 border-red-500 text-center absolute">
                     Invalid sum
                   </div>
                 ) : null}
               </td>
 
               <td>
-                {/* <input
-                type="text"
-                value={input.paidBy}
-                placeholder="Enter name"
-                name="paidBy"
-                onChange={(event) => handleChangeRowInput(index, event)}
-              /> */}
-
                 <select
-                  name="paidBy"
+                  name="paidByIndex"
                   className="w-11/12 bg-transparent text-right"
-                  value={input.paidBy}
+                  value={input.paidByIndex}
                   onChange={(event) => handleChangeRowInput(index, event)}
                 >
-                  <option value="" selected>
+                  <option value={-1} selected>
                     Select
                   </option>
-                  {memberArray.map((name) => (
-                    <option value={name}>{name}</option>
+                  {memberArray.map((name, index) => (
+                    <option value={index}>{name}</option>
                   ))}
                 </select>
               </td>
 
-              {input.detail.map((detail, subIndex) => (
-                <td key={subIndex}>
+              {input.detail.map((detail, detailIndex) => (
+                <td key={detailIndex}>
                   <input
                     type="number"
-                    value={detail.amount}
-                    name={detail.name}
+                    value={detail}
+                    // name={detail}
                     className={input.isInvalid ? "text-red-600" : ""}
                     //Shane, Joe,  Ant's Amount
                     onChange={(event) =>
-                      handleChangeRowInput(index, event, subIndex)
+                      handleChangeRowInput(index, event, detailIndex)
                     }
                   />
                 </td>
@@ -370,15 +352,18 @@ export const Table: React.FC<TableProps> = ({}) => {
           inputArray={inputArray}
           byMembers={byMembers}
           memberArray={memberArray}
+          recalculate={() => setInputArray(inputArray)}
           clearTable={() => {
+            setMemberArray([""]);
+            setByMembers([0]);
             setInputArray([
               {
                 item: "",
                 amount: 0,
-                paidBy: "",
+                paidByIndex: -1,
                 isEquallySplit: false,
                 isInvalid: false,
-                detail: [{ name: "", amount: Math.round(0) }],
+                detail: [0],
               },
             ]);
           }}
@@ -386,7 +371,11 @@ export const Table: React.FC<TableProps> = ({}) => {
       </table>
       <div>{/* Last row to summarizeToBySpender */}</div>
 
-      <SummarySection bySpenders={bySpenders} summary={summary} />
+      <SummarySection
+        bySpenders={bySpenders}
+        summary={summary}
+        memberArray={memberArray}
+      />
     </div>
   );
 };

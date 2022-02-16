@@ -1,30 +1,35 @@
 export interface Expense {
   item: string;
   amount: number;
-  paidBy: string;
-  detail: MemberExpense[];
+  paidByIndex: number; //index of memberArray
+  detail: number[]; //array of number match to index
   isEquallySplit: boolean;
   isInvalid: boolean;
 }
 
-export interface MemberExpense {
-  name: string;
-  amount: number;
-}
+// export interface MemberExpense {
+//   name: string;
+//   amount: number;
+// }
 
 export interface ToPayAndPaid {
-  name: string;
+  memberIndex: number;
   toPay: number;
   paid: number;
   debt: number;
 }
 
 export interface Summary {
-  payer: string;
-  receiver: string;
+  payerIndex: number;
+  receiverIndex: number;
   amount: number;
 }
 export interface Debt {
   name: string;
   debt: number;
+}
+
+export interface Spender {
+  nameIndex: number;
+  paidAmount: number;
 }
