@@ -227,7 +227,7 @@ export const Table: React.FC<TableProps> = ({}) => {
     <div className="w-full ">
       <h2 className="text-black text-3xl my-4 mx-2">Expenses </h2>
       <div className="overflow-x-auto">
-        <table className="table-fixed my-4 mx-2 w-full min-w-max ">
+        <table className=" md:table-fixed my-4 mx-2 w-full min-w-max ">
           <HeaderRow>
             <th>Item</th>
             <th>Amount</th>

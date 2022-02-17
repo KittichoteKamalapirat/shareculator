@@ -57,14 +57,23 @@ th input {
 th input::placeholder {
   color: white;
   opacity: 0.6;
-}
-
-td {
-  width: 25%;
+  /* min-width: max-content; */
 }
 
 th {
   color: white;
+  min-width: max-content;
+  /* min-width: min-content; */
+}
+
+td {
+  /* width: 25%; */
+  min-width: max-content;
+}
+
+td input::placeholder {
+  /* this does something */
+  min-width: max-content;
 }
 
 tfoot td {
