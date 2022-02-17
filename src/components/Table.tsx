@@ -35,6 +35,7 @@ export const Table: React.FC<TableProps> = ({}) => {
 
   const [byMembers, setByMembers] = useState<number[]>([0]);
   const [summary, setSummary] = useState<Summary[]>([]);
+  const [missingPaidBy, setMissingPaidBy] = useState<boolean>(false);
 
   //handle field starts
   const handleChangeRowInput = (
@@ -182,6 +183,17 @@ export const Table: React.FC<TableProps> = ({}) => {
     setInputArray(values);
   };
 
+  useEffect(() => {
+    const inputs = [...inputArray];
+    // missingPaidBy
+    inputs.forEach((input, index) => {
+      if (input.amount > 0 && input.paidByIndex < 0) {
+        setMissingPaidBy(true);
+        return;
+      }
+      setMissingPaidBy(false);
+    });
+  });
   //useEffect No.1
 
   useEffect(() => {
@@ -215,15 +227,15 @@ export const Table: React.FC<TableProps> = ({}) => {
     <div className="w-full ">
       <h2 className="text-black text-3xl my-4 mx-2">Expenses </h2>
       <div className="overflow-x-auto">
-        <table className=" table-fixed my-4 mx-2 w-full min-w-max ">
+        <table className="table-fixed my-4 mx-2 w-full min-w-max ">
           <HeaderRow>
             <th>Item</th>
             <th>Amount</th>
-            <th className="w-max">Paid By</th>
+            <th>Paid By</th>
 
             {memberArray.map((name, index) => (
               <th key={index}>
-                <div className="flex flex-col md:flex-rol">
+                <div className="flex flex-col md:flex-row">
                   <input
                     type="text"
                     value={name}
@@ -287,11 +299,16 @@ export const Table: React.FC<TableProps> = ({}) => {
                 <td>
                   <select
                     name="paidByIndex"
-                    className="w-11/12 bg-transparent text-right"
-                    value={input.paidByIndex}
+                    className={`w-11 /12 bg-transparent min-w-max ${
+                      input.amount > 0 && input.paidByIndex < 0
+                        ? "text-red-600"
+                        : ""
+                    }`}
+                    // value={input.paidByIndex}
                     onChange={(event) => handleChangeRowInput(index, event)}
+                    defaultValue={-1}
                   >
-                    <option value={-1} selected>
+                    <option value={-1} disabled>
                       Select
                     </option>
                     {memberArray.map((name, index) => (
@@ -385,6 +402,7 @@ export const Table: React.FC<TableProps> = ({}) => {
         bySpenders={bySpenders}
         summary={summary}
         memberArray={memberArray}
+        missingPaidBy={missingPaidBy}
       />
     </div>
   );

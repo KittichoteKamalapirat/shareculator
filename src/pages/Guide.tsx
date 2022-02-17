@@ -19,7 +19,7 @@ export const Guide: React.FC<GuideProps> = ({}) => {
         <ul className="list-none m-0 p-0">
           <li className="mb-2">
             <div className="flex items-center mb-1">
-              <div className="bg-blue-600 rounded-full h-4 w-4 border-gray-200 border-2 z-10"></div>
+              <div className="bg-blue-600 rounded-full h-4 w-4 border-gray-200 border-2 z-1"></div>
               <div className="flex-1 ml-4 font-medium">
                 1. Add all member names in COLUMNS header (1st row)
               </div>
@@ -32,7 +32,7 @@ export const Guide: React.FC<GuideProps> = ({}) => {
           </li>
           <li className="mb-2">
             <div className="flex items-center mb-1">
-              <div className="bg-blue-600 rounded-full h-4 w-4 border-gray-200 border-2 z-10"></div>
+              <div className="bg-blue-600 rounded-full h-4 w-4 border-gray-200 border-2 z-1"></div>
               <div className="flex-1 ml-4 font-medium">
                 2. Add all the expenses as ROWS below to header row.
               </div>
@@ -46,7 +46,7 @@ export const Guide: React.FC<GuideProps> = ({}) => {
           </li>
           <li className="mb-2">
             <div className="flex items-center mb-1">
-              <div className="bg-blue-600 rounded-full h-4 w-4 border-gray-200 border-2 z-10"></div>
+              <div className="bg-blue-600 rounded-full h-4 w-4 border-gray-200 border-2 z-1"></div>
               <div className="flex-1 ml-4 font-medium">
                 3. See the summary and pay back to your friends!
               </div>
