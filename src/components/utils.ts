@@ -24,21 +24,16 @@ export const finalize = (
 
   // }
 
-  console.log({ bySpenders });
-  console.log({ byMembers });
-
   const toPayAndPaidArray: ToPayAndPaid[] = byMembers.map((amount, index) => {
-    console.log({ amount });
-    console.log("index", bySpenders[index]);
     const debt = amount - bySpenders[index];
-    console.log({ debt });
+
     const toPayAndPaid: ToPayAndPaid = {
       memberIndex: index,
       toPay: amount,
       paid: bySpenders[index],
       debt,
     };
-    console.log({ toPayAndPaid });
+
     return toPayAndPaid;
   });
 
@@ -58,14 +53,9 @@ export const finalize = (
   //secondly, max lender => Shane
 
   //who pays who algorithm
-  let i = 0;
 
   //> 0 -> give bugs
-  console.log({ toPayAndPaidArray });
   while (toPayAndPaidArray.length > 1) {
-    console.log({ i });
-    i++;
-
     //max Debtor and maxLender could be the same person when Shane (as a lender) does not get 100 returned, 99.99
     const maxDebtor = toPayAndPaidArray.reduce((prev, current) => {
       if (prev.debt > 0) {
@@ -96,9 +86,6 @@ export const finalize = (
       amount: 0,
     };
 
-    console.log({ maxDebtor });
-    console.log({ maxLender });
-
     //Lent a lot
     if (debtPlusLent < 0) {
       console.log("lent alot");
@@ -117,7 +104,6 @@ export const finalize = (
       //borrowed alot
     } else if (debtPlusLent > 0) {
       //remove lender
-      console.log("borrowed alot");
 
       const prevDebt = toPayAndPaidArray[debtorIndex].debt; //120
       const returnAmount = maxLender.debt; // - 90
@@ -128,7 +114,6 @@ export const finalize = (
       toPayAndPaidArray.splice(lenderIndex, 1);
       //same amount
     } else {
-      console.log("borrow = lent");
       const removeIndex = [lenderIndex, debtorIndex];
       //sort from large to small
 
@@ -141,6 +126,5 @@ export const finalize = (
     }
   }
 
-  console.log({ result });
   return result;
 };

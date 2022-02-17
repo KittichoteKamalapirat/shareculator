@@ -19,9 +19,6 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const [style, setStyle] = useState<string>("");
-  console.log("color");
-  console.log(color);
-  console.log({ style });
 
   useEffect(() => {
     let borderColor = "";

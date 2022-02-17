@@ -10,7 +10,7 @@ interface NavbarProps {}
 export const Navbar: React.FC<NavbarProps> = ({}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <nav className="bg-white  border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-800 max-w-6xl mx-auto">
+    <nav className="bg-white  border-gray-200 px-2 sm:px-4 py-2.5 rounded  max-w-6xl mx-auto">
       <div className="container flex flex-wrap justify-between items-center mx-auto ">
         <Link to="/">
           <div className="flex items-center flex-shrink-0 mr-6 cursor-pointer z-30 relative ">

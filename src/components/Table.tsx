@@ -45,7 +45,8 @@ export const Table: React.FC<TableProps> = ({}) => {
   ) => {
     const values: Expense[] = [...inputArray];
     //which index in the array values[0][name]
-    if (!detailIndex) {
+    if (typeof detailIndex === "undefined") {
+      //index 0 -> false, but other numbers are  true
       if (
         values[index][event.target.name as "paidByIndex"] ===
         ("paidByIndex" as never)
@@ -56,15 +57,9 @@ export const Table: React.FC<TableProps> = ({}) => {
           .value as never;
       }
     } else {
-      //name = amount or name
-      //detail[0][amount]
-      //noww name is detail[0]['shane']
-      //index indicates Shane, or Ant
-
       values[index].detail[detailIndex as number] = parseInt(
         event.target.value
       );
-      // values[index].detail[detailIndex as number].name = memberArray[index];
     }
 
     const inputSum = values[index].detail.reduce((a, b) => a + b);
@@ -289,8 +284,10 @@ export const Table: React.FC<TableProps> = ({}) => {
                     onChange={(event) => handleChangeRowInput(index, event)}
                   />
 
-                  {input.isInvalid ? (
-                    <div className="text-red-500 border-2 rounded m-1 border-red-500 text-center absolute">
+                  {input.isInvalid &&
+                  input.detail.filter((subAmount) => subAmount === 0).length !==
+                    input.detail.length ? (
+                    <div className="text-red-500 border-2 rounded m-1 border-red-500 text-center ">
                       Invalid sum
                     </div>
                   ) : null}
@@ -321,7 +318,8 @@ export const Table: React.FC<TableProps> = ({}) => {
                   <td key={detailIndex}>
                     <input
                       type="number"
-                      value={detail.toFixed(2)}
+                      // name='detail'
+                      value={detail}
                       // name={detail}
                       className={input.isInvalid ? "text-red-600" : ""}
                       //Shane, Joe,  Ant's Amount
