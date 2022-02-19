@@ -222,12 +222,22 @@ export const Table: React.FC<TableProps> = ({}) => {
     <div className="w-full ">
       <h2 className="text-black text-3xl my-4 mx-2">Expenses </h2>
       <div className="overflow-x-auto">
-        <table className=" md:table-fixed my-4 mx-2 w-full min-w-max ">
+        <table className=" md:table-fixed  my-4 mx-2 w-full min-w-max md:min-w-fit ">
           <HeaderRow>
             <th>Item</th>
             <th>Amount</th>
             <th>Paid By</th>
 
+            <th style={{ borderRight: "none" }}>
+              {/* Control */}
+              <Button
+                variant="solid"
+                onClick={() => handleAddCol()}
+                aria-label="Add item"
+              >
+                <AddCircleIcon style={{ fill: "white" }} /> member
+              </Button>
+            </th>
             {memberArray.map((name, index) => (
               <th key={index}>
                 <div className="flex flex-col md:flex-row">
@@ -249,16 +259,6 @@ export const Table: React.FC<TableProps> = ({}) => {
                 </div>
               </th>
             ))}
-            <th style={{ borderRight: "none" }}>
-              {/* Control */}
-              <Button
-                variant="solid"
-                onClick={() => handleAddCol()}
-                aria-label="Add item"
-              >
-                <AddCircleIcon style={{ fill: "white" }} /> member
-              </Button>
-            </th>
           </HeaderRow>
 
           {/* table body */}
@@ -278,8 +278,12 @@ export const Table: React.FC<TableProps> = ({}) => {
                 <td>
                   <input
                     type="number"
-                    placeholder="Total amount"
-                    value={parseInt(input.amount as any)}
+                    placeholder="0"
+                    value={
+                      parseInt(input.amount as any) === 0
+                        ? ""
+                        : parseInt(input.amount as any)
+                    }
                     name="amount"
                     onChange={(event) => handleChangeRowInput(index, event)}
                   />
@@ -308,27 +312,12 @@ export const Table: React.FC<TableProps> = ({}) => {
                     <option value={-1} disabled>
                       Select
                     </option>
+
                     {memberArray.map((name, index) => (
                       <option value={index}>{name}</option>
                     ))}
                   </select>
                 </td>
-
-                {input.detail.map((detail, detailIndex) => (
-                  <td key={detailIndex}>
-                    <input
-                      type="number"
-                      // name='detail'
-                      value={detail}
-                      // name={detail}
-                      className={input.isInvalid ? "text-red-600" : ""}
-                      //Shane, Joe,  Ant's Amount
-                      onChange={(event) =>
-                        handleChangeRowInput(index, event, detailIndex)
-                      }
-                    />
-                  </td>
-                ))}
 
                 <td style={{ borderRight: "none" }}>
                   {/* <button onClick={(e) => handleSplitEqually(index, e)}> */}
@@ -360,6 +349,22 @@ export const Table: React.FC<TableProps> = ({}) => {
                     </Button>
                   ) : null}
                 </td>
+
+                {input.detail.map((detail, detailIndex) => (
+                  <td key={detailIndex}>
+                    <input
+                      type="number"
+                      // name='detail'
+                      value={detail}
+                      // name={detail}
+                      className={input.isInvalid ? "text-red-600" : ""}
+                      //Shane, Joe,  Ant's Amount
+                      onChange={(event) =>
+                        handleChangeRowInput(index, event, detailIndex)
+                      }
+                    />
+                  </td>
+                ))}
               </BodyRow>
             ))}
           </tbody>

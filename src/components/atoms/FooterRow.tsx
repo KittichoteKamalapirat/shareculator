@@ -36,15 +36,13 @@ export const FooterRow: React.FC<FooterRowProps> = ({
         )}
       </td>
       <td> All </td>
-      {byMembers.map((amount, index) => (
-        // <td key={index}>{amount.toFixed(2)} </td>
-        <td key={index}>{amount.toFixed(2)} </td>
-      ))}
-      {/* below code is for fix bugs  */}
-      <td style={{ backgroundColor: "white" }}>
-        <Flex>
+      <td>
+        {/* <Flex> */}
+        <div style={{ display: "flex" }}>
           <Button
+            style={{ flexGrow: 1 }}
             variant="outlined"
+            color="white"
             onClick={() => {
               clearTable();
             }}
@@ -52,11 +50,22 @@ export const FooterRow: React.FC<FooterRowProps> = ({
             Clear
           </Button>
 
-          <Button variant="outlined" onClick={() => recalculate()}>
+          <Button
+            style={{ flexGrow: 1 }}
+            variant="outlined"
+            color="white"
+            onClick={() => recalculate()}
+          >
             Calculate
           </Button>
-        </Flex>
+        </div>
+        {/* </Flex> */}
       </td>
+      {byMembers.map((amount, index) => (
+        // <td key={index}>{amount.toFixed(2)} </td>
+        <td key={index}>{amount.toFixed(2)} </td>
+      ))}
+      {/* below code is for fix bugs  */}
     </tfoot>
   );
 };
