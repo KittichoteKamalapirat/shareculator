@@ -36,6 +36,7 @@ export const FooterRow: React.FC<FooterRowProps> = ({
         )}
       </td>
       <td> All </td>
+      <td> With </td>
       <td>
         {/* <Flex> */}
         <div style={{ display: "flex" }}>
@@ -50,14 +51,14 @@ export const FooterRow: React.FC<FooterRowProps> = ({
             Clear
           </Button>
 
-          <Button
+          {/* <Button
             style={{ flexGrow: 1 }}
             variant="outlined"
             color="white"
             onClick={() => recalculate()}
           >
             Calculate
-          </Button>
+          </Button> */}
         </div>
         {/* </Flex> */}
       </td>

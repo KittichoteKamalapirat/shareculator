@@ -12,6 +12,8 @@ import { Expense, Summary } from "./interface";
 import { Flex } from "./layouts/Flex";
 import { SummarySection } from "./templates/SummarySection";
 import { finalize, summarizeToBySpender } from "./utils";
+import { calcSplitAmong } from "./utils/calcSplitAmong";
+import { toggleSplitAmong } from "./utils/toggleSplitAmong";
 
 interface TableProps {}
 
@@ -20,6 +22,7 @@ const initialInput = [...Array(5)].map((num) => {
     item: "",
     amount: 0,
     paidByIndex: -1,
+    splitAmong: [true, true, true],
     isEquallySplit: false,
     isInvalid: false,
     detail: [0, 0, 0],
@@ -43,7 +46,7 @@ export const Table: React.FC<TableProps> = ({}) => {
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     detailIndex?: number
   ) => {
-    const values: Expense[] = [...inputArray];
+    let values: Expense[] = [...inputArray];
     //which index in the array values[0][name]
     if (typeof detailIndex === "undefined") {
       //index 0 -> false, but other numbers are  true
@@ -63,6 +66,8 @@ export const Table: React.FC<TableProps> = ({}) => {
     }
 
     const inputSum = values[index].detail.reduce((a, b) => a + b);
+    console.log("inputSum", inputSum);
+    console.log(values);
     const amount = parseInt(values[index].amount as any); //amount is string
     if (inputSum !== amount) {
       values[index].isInvalid = true;
@@ -70,6 +75,7 @@ export const Table: React.FC<TableProps> = ({}) => {
       values[index].isInvalid = false;
     }
 
+    values = calcSplitAmong(values, index);
     setInputArray(values);
   };
 
@@ -94,10 +100,8 @@ export const Table: React.FC<TableProps> = ({}) => {
       amount: 0,
       paidByIndex: -1,
       isEquallySplit: false,
+      splitAmong: memberArray.map((member) => true),
       isInvalid: false,
-      // detail: memberArray.map((member) => {
-      //   return { name: member, amount: Math.round(0) };
-      // }),
       detail: memberArray.map((member) => 0),
     });
 
@@ -111,6 +115,7 @@ export const Table: React.FC<TableProps> = ({}) => {
     //add a new amount to detail array
     expenseArray.forEach((expense) => {
       expense.detail.splice(expense.detail.length, 0, 0);
+      expense.splitAmong.splice(expense.detail.length, 0, true);
     });
 
     memberNames.push("");
@@ -168,6 +173,15 @@ export const Table: React.FC<TableProps> = ({}) => {
     setInputArray(values);
   };
 
+  //handle checkbox
+  const handleClickSplitAmong = (index: number, subIndex: number) => {
+    let inputs = [...inputArray];
+    inputs = toggleSplitAmong(inputs, index, subIndex);
+    inputs = calcSplitAmong(inputs, index);
+
+    setInputArray(inputs);
+  };
+
   const handleRemoveRow = (index: any) => {
     const values = [...inputArray];
     if (values.length === 1) {
@@ -178,9 +192,11 @@ export const Table: React.FC<TableProps> = ({}) => {
     setInputArray(values);
   };
 
+  //handle validation
   useEffect(() => {
     const inputs = [...inputArray];
     // missingPaidBy
+
     inputs.forEach((input, index) => {
       if (input.amount > 0 && input.paidByIndex < 0) {
         setMissingPaidBy(true);
@@ -189,6 +205,9 @@ export const Table: React.FC<TableProps> = ({}) => {
       setMissingPaidBy(false);
     });
   });
+
+  // handle split among
+
   //useEffect No.1
 
   useEffect(() => {
@@ -227,6 +246,7 @@ export const Table: React.FC<TableProps> = ({}) => {
             <th>Item</th>
             <th>Amount</th>
             <th>Paid By</th>
+            <th>With</th>
 
             <th style={{ borderRight: "none" }}>
               {/* Control */}
@@ -314,13 +334,16 @@ export const Table: React.FC<TableProps> = ({}) => {
                     </option>
 
                     {memberArray.map((name, index) => (
-                      <option value={index}>{name}</option>
+                      <option value={index}>
+                        {name === "" ? "Name " + (index + 1) : name}{" "}
+                      </option>
                     ))}
                   </select>
                 </td>
 
                 <td style={{ borderRight: "none" }}>
                   {/* <button onClick={(e) => handleSplitEqually(index, e)}> */}
+                  {/*                   
                   {input.isEquallySplit ? (
                     <Button
                       variant="outlined"
@@ -336,7 +359,37 @@ export const Table: React.FC<TableProps> = ({}) => {
                     >
                       <CameraIcon style={{ fill: "rgb(96 165 250)" }} /> divide
                     </Button>
-                  )}
+                  )} */}
+
+                  <div>
+                    {memberArray.map((member, subIndex) => (
+                      <div>
+                        <input
+                          className="w-4"
+                          id={member}
+                          // defaultChecked
+                          checked={input.splitAmong[subIndex]}
+                          type="checkbox"
+                          name={member}
+                          onChange={() =>
+                            handleClickSplitAmong(index, subIndex)
+                          }
+                        />
+                        <label htmlFor={member}>
+                          {member === "" ? (
+                            <span className="text-gray-400">
+                              {"Name " + (subIndex + 1)}
+                            </span>
+                          ) : (
+                            member
+                          )}{" "}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </td>
+
+                <td>
                   {/* </button> */}
                   {index !== 0 ? (
                     <Button
@@ -355,7 +408,9 @@ export const Table: React.FC<TableProps> = ({}) => {
                     <input
                       type="number"
                       // name='detail'
-                      value={detail}
+                      // value={detail}
+                      value={detail === 0 ? "" : detail}
+                      placeholder="0"
                       // name={detail}
                       className={input.isInvalid ? "text-red-600" : ""}
                       //Shane, Joe,  Ant's Amount
@@ -394,7 +449,19 @@ export const Table: React.FC<TableProps> = ({}) => {
             clearTable={() => {
               setMemberArray([...Array(memberArray.length)].map((num) => ""));
               setByMembers([...Array(memberArray.length)].map((num) => 0));
-              setInputArray(initialInput);
+              setInputArray(
+                [...Array(5)].map((num) => {
+                  return {
+                    item: "",
+                    amount: 0,
+                    paidByIndex: -1,
+                    splitAmong: [true, true, true],
+                    isEquallySplit: false,
+                    isInvalid: false,
+                    detail: [0, 0, 0],
+                  };
+                })
+              );
             }}
           />
         </table>

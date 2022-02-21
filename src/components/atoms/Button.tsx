@@ -28,7 +28,7 @@ export const Button: React.FC<ButtonProps> = ({
       case "solid":
         bgColor = `bg-${color}`;
         const solid = `${
-          color ? bgColor : "green-500"
+          color ? bgColor : "bg-green-500"
         } rounded px-2 py-1 hover:bg-green-600 text-white`;
         setStyle(solid);
         break;

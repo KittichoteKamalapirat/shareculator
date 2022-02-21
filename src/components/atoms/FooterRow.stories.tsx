@@ -15,7 +15,9 @@ export const Default = () => (
         item: "เหน่ ",
         amount: 30,
         paidByIndex: 0,
+        splitAmong: [true, true, true],
         isEquallySplit: false,
+
         isInvalid: false,
         detail: [10, 10, 10],
       },

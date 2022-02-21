@@ -3,6 +3,7 @@ export interface Expense {
   amount: number;
   paidByIndex: number; //index of memberArray
   detail: number[]; //array of number match to index
+  splitAmong: boolean[];
   isEquallySplit: boolean;
   isInvalid: boolean;
 }
