@@ -10,6 +10,7 @@ import { FooterRow } from "./atoms/FooterRow";
 import { HeaderRow } from "./atoms/HeaderRow";
 import { Expense, Summary } from "./interface";
 import { Flex } from "./layouts/Flex";
+import { Card } from "./molecules/Card";
 import { SummarySection } from "./templates/SummarySection";
 import { finalize, summarizeToBySpender } from "./utils";
 import { calcSplitAmong } from "./utils/calcSplitAmong";
@@ -59,6 +60,7 @@ export const Table: React.FC<TableProps> = ({}) => {
         values[index][event.target.name as "item" | "amount"] = event.target
           .value as never;
       }
+      values = calcSplitAmong(values, index);
     } else {
       values[index].detail[detailIndex as number] = parseInt(
         event.target.value
@@ -75,7 +77,6 @@ export const Table: React.FC<TableProps> = ({}) => {
       values[index].isInvalid = false;
     }
 
-    values = calcSplitAmong(values, index);
     setInputArray(values);
   };
 
@@ -131,6 +132,7 @@ export const Table: React.FC<TableProps> = ({}) => {
 
     expenseArray.forEach((expense) => {
       expense.detail.splice(index, 1);
+      expense.splitAmong.splice(index, 1);
     });
     byMemberArray.splice(index, 1);
 
@@ -192,7 +194,7 @@ export const Table: React.FC<TableProps> = ({}) => {
     setInputArray(values);
   };
 
-  //handle validation
+  //handle validation, select field
   useEffect(() => {
     const inputs = [...inputArray];
     // missingPaidBy
@@ -239,52 +241,110 @@ export const Table: React.FC<TableProps> = ({}) => {
   }, [bySpenders, byMembers]);
   return (
     <div className="w-full ">
-      <h2 className="text-black text-3xl my-4 mx-2">Expenses </h2>
+      <div className="mx-1 ">
+        <h2 className="font-bold text-xl mb-2">
+          {/* <h2 className="text-black text-3xl my-4 mx-2"> */}
+          Who were there are the party?
+        </h2>
+        <Card title="">
+          {memberArray.map((name, index) => (
+            <div key={index}>
+              <input
+                type="text"
+                value={name}
+                placeholder="Add Name"
+                name="memberName"
+                onChange={(event) => handleChangeMemberArray(index, event)}
+                className=" w-40 py-1 px-0  my-2 focus:border-primary focus:outline-none focus:ring-0 "
+              />
+              <Button
+                variant="naked"
+                onClick={() => handleRemoveCol(index)}
+                aria-label="Remove item"
+              >
+                <DeleteIcon style={{ fill: "red" }} />
+              </Button>
+            </div>
+          ))}
+
+          <Button
+            variant="solid"
+            onClick={() => handleAddCol()}
+            aria-label="Add item"
+            className="my-2"
+          >
+            <AddCircleIcon style={{ fill: "white" }} /> member
+          </Button>
+        </Card>
+      </div>
+
+      <div className="mx-1 ">
+        <h2 className="font-bold text-xl mb-2">Expenses details</h2>
+      </div>
+
+      {/* <h2 className="text-black text-3xl my-4 mx-2">Expenses </h2> */}
       <div className="overflow-x-auto">
         <table className=" md:table-fixed  my-4 mx-2 w-full min-w-max md:min-w-fit ">
-          <HeaderRow>
-            <th>Item</th>
-            <th>Amount</th>
-            <th>Paid By</th>
-            <th>With</th>
-
-            <th style={{ borderRight: "none" }}>
-              {/* Control */}
-              <Button
+          <thead>
+            <HeaderRow>
+              <th className="w-10 ">
+                {/* Control */}
+                {/* <Button
                 variant="solid"
                 onClick={() => handleAddCol()}
                 aria-label="Add item"
               >
                 <AddCircleIcon style={{ fill: "white" }} /> member
-              </Button>
-            </th>
-            {memberArray.map((name, index) => (
-              <th key={index}>
-                <div className="flex flex-col md:flex-row">
-                  <input
-                    type="text"
-                    value={name}
-                    placeholder="Add Name"
-                    name="memberName"
-                    onChange={(event) => handleChangeMemberArray(index, event)}
-                  />
-
-                  <Button
-                    variant="naked"
-                    onClick={() => handleRemoveCol(index)}
-                    aria-label="Remove item"
-                  >
-                    <DeleteIcon style={{ fill: "white" }} />
-                  </Button>
-                </div>
+              </Button> */}
               </th>
-            ))}
-          </HeaderRow>
+              <th>Item</th>
+              <th>Amount</th>
+              <th>Paid By</th>
+              <th>With</th>
+
+              {memberArray.map((name, index) => (
+                <th key={index}>
+                  <div className="flex flex-col md:flex-row">
+                    <input
+                      type="text"
+                      value={name}
+                      placeholder="Add Name"
+                      name="memberName"
+                      onChange={(event) =>
+                        handleChangeMemberArray(index, event)
+                      }
+                    />
+
+                    <Button
+                      variant="naked"
+                      onClick={() => handleRemoveCol(index)}
+                      aria-label="Remove item"
+                    >
+                      <DeleteIcon style={{ fill: "white" }} />
+                    </Button>
+                  </div>
+                </th>
+              ))}
+            </HeaderRow>
+          </thead>
 
           {/* table body */}
           <tbody>
             {inputArray.map((input, index, array) => (
               <BodyRow key={index} myKey={index} rowLength={array.length}>
+                <td>
+                  {/* </button> */}
+
+                  <Button
+                    variant="naked"
+                    onClick={() => handleRemoveRow(index)}
+                    aria-label="Remove item"
+                    className="ml-4"
+                  >
+                    <DeleteIcon style={{ fill: "gray" }} />
+                  </Button>
+                </td>
+
                 <td>
                   <input
                     type="text"
@@ -334,7 +394,7 @@ export const Table: React.FC<TableProps> = ({}) => {
                     </option>
 
                     {memberArray.map((name, index) => (
-                      <option value={index}>
+                      <option value={index} key={index}>
                         {name === "" ? "Name " + (index + 1) : name}{" "}
                       </option>
                     ))}
@@ -363,7 +423,7 @@ export const Table: React.FC<TableProps> = ({}) => {
 
                   <div>
                     {memberArray.map((member, subIndex) => (
-                      <div>
+                      <div key={subIndex}>
                         <input
                           className="w-4"
                           id={member}
@@ -389,27 +449,13 @@ export const Table: React.FC<TableProps> = ({}) => {
                   </div>
                 </td>
 
-                <td>
-                  {/* </button> */}
-                  {index !== 0 ? (
-                    <Button
-                      variant="naked"
-                      onClick={() => handleRemoveRow(index)}
-                      aria-label="Remove item"
-                      className="ml-4"
-                    >
-                      <DeleteIcon style={{ fill: "gray" }} />
-                    </Button>
-                  ) : null}
-                </td>
-
                 {input.detail.map((detail, detailIndex) => (
                   <td key={detailIndex}>
                     <input
                       type="number"
                       // name='detail'
                       // value={detail}
-                      value={detail === 0 ? "" : detail}
+                      value={detail.toString().slice(0, 5)}
                       placeholder="0"
                       // name={detail}
                       className={input.isInvalid ? "text-red-600" : ""}
@@ -422,51 +468,57 @@ export const Table: React.FC<TableProps> = ({}) => {
                 ))}
               </BodyRow>
             ))}
+            <tr>
+              <td
+                colSpan={4 + memberArray.length}
+                style={{ borderRight: "none" }}
+              >
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <Button
+                    variant="bottom-line"
+                    onClick={() => handleAddRow(inputArray.length)}
+                    aria-label="Add item"
+                  >
+                    + Add item
+                  </Button>
+                </div>
+              </td>
+            </tr>
           </tbody>
-
-          <tr>
-            <td
-              colSpan={4 + memberArray.length}
-              style={{ borderRight: "none" }}
-            >
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Button
-                  variant="bottom-line"
-                  onClick={() => handleAddRow(inputArray.length)}
-                  aria-label="Add item"
-                >
-                  + Add item
-                </Button>
-              </div>
-            </td>
-          </tr>
 
           <FooterRow
             inputArray={inputArray}
             byMembers={byMembers}
             memberArray={memberArray}
             recalculate={() => setInputArray(inputArray)}
-            clearTable={() => {
-              setMemberArray([...Array(memberArray.length)].map((num) => ""));
-              setByMembers([...Array(memberArray.length)].map((num) => 0));
-              setInputArray(
-                [...Array(5)].map((num) => {
-                  return {
-                    item: "",
-                    amount: 0,
-                    paidByIndex: -1,
-                    splitAmong: [true, true, true],
-                    isEquallySplit: false,
-                    isInvalid: false,
-                    detail: [0, 0, 0],
-                  };
-                })
-              );
-            }}
           />
         </table>
       </div>
       <div>{/* Last row to summarizeToBySpender */}</div>
+
+      <h2 className="mx-1">
+        <Button
+          onClick={() => {
+            setMemberArray([...Array(memberArray.length)].map((num) => ""));
+            setByMembers([...Array(memberArray.length)].map((num) => 0));
+            setInputArray(
+              [...Array(5)].map((num) => {
+                return {
+                  item: "",
+                  amount: 0,
+                  paidByIndex: -1,
+                  splitAmong: memberArray.map((name) => true),
+                  isEquallySplit: false,
+                  isInvalid: false,
+                  detail: memberArray.map((name) => 0),
+                };
+              })
+            );
+          }}
+        >
+          Clear table
+        </Button>
+      </h2>
 
       <SummarySection
         bySpenders={bySpenders}

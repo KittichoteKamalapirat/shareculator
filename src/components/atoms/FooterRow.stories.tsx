@@ -25,7 +25,6 @@ export const Default = () => (
     recalculate={() => console.log("recalculate")}
     byMembers={[10, 10, 10]}
     memberArray={["Shane", "Joe", "Ant"]}
-    clearTable={() => console.log("clear")}
   ></FooterRow>
 );
 
