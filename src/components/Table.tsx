@@ -244,7 +244,7 @@ export const Table: React.FC<TableProps> = ({}) => {
       <div className="mx-1 ">
         <h2 className="font-bold text-xl mb-2">
           {/* <h2 className="text-black text-3xl my-4 mx-2"> */}
-          Who were there are the party?
+          Who were there at the party?
         </h2>
         <Card title="">
           {memberArray.map((name, index) => (

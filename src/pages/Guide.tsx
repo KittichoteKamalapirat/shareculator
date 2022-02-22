@@ -12,6 +12,7 @@ export const Guide: React.FC<GuideProps> = ({}) => {
 
       <p className="mt-5">
         It's very similar to when you use MICROSOFT EXCEL to calculate expenses.
+        But BETTER.
       </p>
       <p>Here are the steps to follow.</p>
       <div className="relative md:w-1/2  m-8">
@@ -21,7 +22,7 @@ export const Guide: React.FC<GuideProps> = ({}) => {
             <div className="flex items-center mb-1">
               <div className="bg-blue-600 rounded-full h-4 w-4 border-gray-200 border-2 z-1"></div>
               <div className="flex-1 ml-4 font-medium">
-                1. Add all member names in COLUMNS header (1st row)
+                1. Add all member names in the Top section
               </div>
             </div>
             <div className="ml-12">
@@ -34,14 +35,14 @@ export const Guide: React.FC<GuideProps> = ({}) => {
             <div className="flex items-center mb-1">
               <div className="bg-blue-600 rounded-full h-4 w-4 border-gray-200 border-2 z-1"></div>
               <div className="flex-1 ml-4 font-medium">
-                2. Add all the expenses as ROWS below to header row.
+                2. Add all the expenses as ROWS in the table.
               </div>
             </div>
             <div className="ml-12">
               You can add item(what you spent for), amount (how much you spent),
-              paid by (who paid for it), and the amount each person is
-              responsible for. If it's equally split, you can just click the
-              "Divide" button. If not, you can toggle it back to "Customize".
+              paid by (who paid for it), who to include. It will be equally
+              split by default. However, you can also edit the number below each
+              name.
             </div>
           </li>
           <li className="mb-2">
@@ -54,8 +55,9 @@ export const Guide: React.FC<GuideProps> = ({}) => {
             <div className="ml-12">
               The summary is calculated to minimize the number of transactions.
               Follow the instruction and let's not keep your friends waiting.
-              She might be wailting but don't want to remind you! But if you're
-              sure that she already forgot, let's ...
+              They might be waiting but don't want to remind you! But if you're
+              sure that they already forgot, maybe you don't need to wake a
+              sleeping tiger.
             </div>
           </li>
         </ul>
