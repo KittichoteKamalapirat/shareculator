@@ -5,6 +5,7 @@ import { Button } from "../../atoms/Button";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { XYCenter } from "../XYCenter";
+import { Desktop } from "./Desktop";
 interface NavbarProps {}
 
 export const Navbar: React.FC<NavbarProps> = ({}) => {
@@ -73,6 +74,7 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
           </XYCenter>
         </div>
 
+        <Desktop />
         {/* desktop */}
       </div>
     </nav>

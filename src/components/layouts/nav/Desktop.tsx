@@ -10,7 +10,7 @@ export const Desktop: React.FC<DesktopProps> = ({}) => {
       <ul className="flex items-center md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
         <li>
           <Link to="/guide">
-            <Button variant="outlined">See how to use</Button>
+            <Button variant="outlined">How to use</Button>
           </Link>
         </li>
         <li>

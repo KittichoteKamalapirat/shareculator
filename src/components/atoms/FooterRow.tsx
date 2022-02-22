@@ -20,12 +20,8 @@ export const FooterRow: React.FC<FooterRowProps> = ({
   return (
     <tfoot className="bg-blue-500 border-r-0 text-right">
       <tr>
-        <td>
-          {/* <Flex> */}
-          <div style={{ display: "flex" }}>none</div>
-          {/* </Flex> */}
-        </td>
-        <td>Total to pay</td>
+        <td></td>
+        <td></td>
         {/* combine all */}
         <td>
           {inputArray.length > 1 ? (
@@ -39,8 +35,8 @@ export const FooterRow: React.FC<FooterRowProps> = ({
             <div className="text-white">{inputArray[0].amount}</div>
           )}
         </td>
-        <td> All </td>
-        <td> With </td>
+        <td></td>
+        <td> </td>
 
         {byMembers.map((amount, index) => (
           // <td key={index}>{amount.toFixed(2)} </td>

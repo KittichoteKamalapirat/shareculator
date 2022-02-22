@@ -8,6 +8,7 @@ interface ButtonProps
   > {
   variant?: "solid" | "outlined" | "bottom-line" | "naked";
   color?: string;
+  padding?: number;
   // onClick?: () => void;
 }
 
@@ -15,6 +16,7 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   variant = "solid",
   color,
+  padding,
   onClick,
   ...props
 }) => {
@@ -24,6 +26,7 @@ export const Button: React.FC<ButtonProps> = ({
     let borderColor = "";
     let bgColor = "";
     let textColor = "";
+    let customPadding = "";
     switch (variant) {
       case "solid":
         bgColor = `bg-${color}`;
@@ -46,7 +49,10 @@ export const Button: React.FC<ButtonProps> = ({
         setStyle(outlined);
         break;
       case "naked":
-        const naked = `bg-transparent rounded  px-2 py-1 border-white   hover:bg-sky-100 `;
+        customPadding = `px-${padding}`;
+        const naked = `bg-transparent rounded py-1 ${
+          typeof padding === "number" ? customPadding : "px-2"
+        } border-white hover:bg-sky-100 `;
         setStyle(naked);
         break;
     }

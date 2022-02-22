@@ -278,55 +278,42 @@ export const Table: React.FC<TableProps> = ({}) => {
         </Card>
       </div>
 
-      <div className="mx-1 ">
+      <div className="mx-1 mt-12">
         <h2 className="font-bold text-xl mb-2">Expenses details</h2>
       </div>
 
       {/* <h2 className="text-black text-3xl my-4 mx-2">Expenses </h2> */}
       <div className="overflow-x-auto">
         <table className=" md:table-fixed  my-4 mx-2 w-full min-w-max md:min-w-fit ">
-          <thead>
-            <HeaderRow>
-              <th className="w-10 ">
-                {/* Control */}
-                {/* <Button
-                variant="solid"
-                onClick={() => handleAddCol()}
-                aria-label="Add item"
-              >
-                <AddCircleIcon style={{ fill: "white" }} /> member
-              </Button> */}
+          <HeaderRow>
+            <th className="w-10 ">#</th>
+            <th>Item</th>
+            <th>Amount</th>
+            <th>Paid By</th>
+            <th>With</th>
+
+            {memberArray.map((name, index) => (
+              <th key={index}>
+                <div className="flex flex-col md:flex-row">
+                  <input
+                    type="text"
+                    value={name}
+                    placeholder="Add Name"
+                    name="memberName"
+                    onChange={(event) => handleChangeMemberArray(index, event)}
+                  />
+
+                  <Button
+                    variant="naked"
+                    onClick={() => handleRemoveCol(index)}
+                    aria-label="Remove item"
+                  >
+                    <DeleteIcon style={{ fill: "white" }} />
+                  </Button>
+                </div>
               </th>
-              <th>Item</th>
-              <th>Amount</th>
-              <th>Paid By</th>
-              <th>With</th>
-
-              {memberArray.map((name, index) => (
-                <th key={index}>
-                  <div className="flex flex-col md:flex-row">
-                    <input
-                      type="text"
-                      value={name}
-                      placeholder="Add Name"
-                      name="memberName"
-                      onChange={(event) =>
-                        handleChangeMemberArray(index, event)
-                      }
-                    />
-
-                    <Button
-                      variant="naked"
-                      onClick={() => handleRemoveCol(index)}
-                      aria-label="Remove item"
-                    >
-                      <DeleteIcon style={{ fill: "white" }} />
-                    </Button>
-                  </div>
-                </th>
-              ))}
-            </HeaderRow>
-          </thead>
+            ))}
+          </HeaderRow>
 
           {/* table body */}
           <tbody>
@@ -339,7 +326,7 @@ export const Table: React.FC<TableProps> = ({}) => {
                     variant="naked"
                     onClick={() => handleRemoveRow(index)}
                     aria-label="Remove item"
-                    className="ml-4"
+                    padding={0}
                   >
                     <DeleteIcon style={{ fill: "gray" }} />
                   </Button>
@@ -470,7 +457,7 @@ export const Table: React.FC<TableProps> = ({}) => {
             ))}
             <tr>
               <td
-                colSpan={4 + memberArray.length}
+                colSpan={5 + memberArray.length}
                 style={{ borderRight: "none" }}
               >
                 <div style={{ display: "flex", justifyContent: "center" }}>

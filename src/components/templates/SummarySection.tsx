@@ -16,12 +16,13 @@ export const SummarySection: React.FC<SummaryProps> = ({
   missingPaidBy,
 }) => {
   return (
-    <div className="flex flex-col lg:flex-row gap-4 my-10 mx-2">
+    <div className="flex flex-col lg:flex-row gap-4 my-10 mx-2 ">
       <Card title="Total by spenders">
         {bySpenders.map((amount, index) => {
           return (
             <div key={index}>
-              {memberArray[index]} has spent {bySpenders[index]}
+              <span style={{ fontWeight: "bold" }}>{memberArray[index]} </span>
+              has spent {bySpenders[index]}
             </div>
           );
         })}
@@ -32,15 +33,15 @@ export const SummarySection: React.FC<SummaryProps> = ({
           <div>Please indicate who paid for all the items</div>
         ) : (
           summary?.map((item, index) => (
-            <div key={index}>
+            <div key={index} className="text-2xl">
               <p>
                 <span style={{ fontWeight: "bold" }}>
                   {memberArray[item.payerIndex]}
                 </span>{" "}
-                pays{" "}
+                returns{" "}
                 <span style={{ fontWeight: "bold" }}>
                   {memberArray[item.receiverIndex]}
-                </span>{" "}
+                </span>
                 :{" "}
                 <span style={{ fontWeight: "bold" }}>
                   {/* {item.amount.toFixed(2)} */}
