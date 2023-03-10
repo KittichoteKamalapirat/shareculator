@@ -1,5 +1,4 @@
 import { Expense } from "../interface";
-import { toggleSplitAmong } from "./toggleSplitAmong";
 
 export const calcSplitAmong = (inputs: Expense[], index: number) => {
   const splitAmongs = inputs[index].splitAmong;
@@ -7,9 +6,7 @@ export const calcSplitAmong = (inputs: Expense[], index: number) => {
     (bool) => bool === true
   ).length;
 
-  console.log("splitNum", splitNum);
   const burderEach = inputs[index].amount / splitNum;
-  console.log("burderEach", burderEach);
 
   //handle calculation
   splitAmongs.forEach((bool, includedIndex) => {

@@ -1,22 +1,19 @@
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import CameraIcon from "@mui/icons-material/Camera";
 import DeleteIcon from "@mui/icons-material/Delete";
-import PieChartIcon from "@mui/icons-material/PieChart";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import React, { useEffect, useState } from "react";
 import { BodyRow } from "./atoms/BodyRow";
 import { Button } from "./atoms/Button";
 import { FooterRow } from "./atoms/FooterRow";
 import { HeaderRow } from "./atoms/HeaderRow";
 import { Expense, Summary } from "./interface";
-import { Flex } from "./layouts/Flex";
 import { Card } from "./molecules/Card";
 import { SummarySection } from "./templates/SummarySection";
 import { finalize, summarizeToBySpender } from "./utils";
 import { calcSplitAmong } from "./utils/calcSplitAmong";
 import { toggleSplitAmong } from "./utils/toggleSplitAmong";
 
-interface TableProps {}
+const MEMBERS_KEY = "members";
+const EXPENSES_KEY = "expenses";
 
 const initialInput = [...Array(5)].map((num) => {
   return {
@@ -30,7 +27,7 @@ const initialInput = [...Array(5)].map((num) => {
   };
 });
 
-export const Table: React.FC<TableProps> = ({}) => {
+export const Table = () => {
   const [memberArray, setMemberArray] = useState<string[]>(["", "", ""]);
 
   const [inputArray, setInputArray] = useState<Expense[]>(initialInput);
@@ -68,8 +65,6 @@ export const Table: React.FC<TableProps> = ({}) => {
     }
 
     const inputSum = values[index].detail.reduce((a, b) => a + b);
-    console.log("inputSum", inputSum);
-    console.log(values);
     const amount = parseInt(values[index].amount as any); //amount is string
     if (inputSum !== amount) {
       values[index].isInvalid = true;
@@ -78,6 +73,7 @@ export const Table: React.FC<TableProps> = ({}) => {
     }
 
     setInputArray(values);
+    localStorage.setItem(EXPENSES_KEY, JSON.stringify(values));
   };
 
   const handleChangeMemberArray = (
@@ -91,6 +87,8 @@ export const Table: React.FC<TableProps> = ({}) => {
     inputs.forEach((input) => (input.detail[index] = 0));
 
     setMemberArray(memArr);
+
+    localStorage.setItem(MEMBERS_KEY, JSON.stringify(memArr));
   };
 
   const handleAddRow = (index: any) => {
@@ -143,6 +141,16 @@ export const Table: React.FC<TableProps> = ({}) => {
     setByMembers(byMemberArray);
   };
 
+  useEffect(() => {
+    const expensesStr = localStorage.getItem(EXPENSES_KEY);
+    const expensesJson = expensesStr && (JSON.parse(expensesStr) as Expense[]);
+    if (expensesJson) setInputArray(expensesJson);
+
+    const membersStr = localStorage.getItem(MEMBERS_KEY);
+    const membersJson = membersStr && (JSON.parse(membersStr) as string[]);
+    if (membersJson) setMemberArray(membersJson);
+  }, []);
+
   const handleSplitEqually = (
     index: number,
     event: React.MouseEvent<HTMLElement>
@@ -194,6 +202,25 @@ export const Table: React.FC<TableProps> = ({}) => {
     setInputArray(values);
   };
 
+  const handleClearTable = () => {
+    setMemberArray([...Array(memberArray.length)].map((num) => ""));
+    setByMembers([...Array(memberArray.length)].map((num) => 0));
+    setInputArray(
+      [...Array(5)].map((num) => {
+        return {
+          item: "",
+          amount: 0,
+          paidByIndex: -1,
+          splitAmong: memberArray.map((name) => true),
+          isEquallySplit: false,
+          isInvalid: false,
+          detail: memberArray.map((name) => 0),
+        };
+      })
+    );
+
+    localStorage.clear();
+  };
   //handle validation, select field
   useEffect(() => {
     const inputs = [...inputArray];
@@ -239,6 +266,7 @@ export const Table: React.FC<TableProps> = ({}) => {
       setSummary(finalize(bySpenders, byMembers));
     }
   }, [bySpenders, byMembers]);
+
   return (
     <div className="w-full ">
       <div className="mx-1 ">
@@ -484,27 +512,7 @@ export const Table: React.FC<TableProps> = ({}) => {
       <div>{/* Last row to summarizeToBySpender */}</div>
 
       <h2 className="mx-1">
-        <Button
-          onClick={() => {
-            setMemberArray([...Array(memberArray.length)].map((num) => ""));
-            setByMembers([...Array(memberArray.length)].map((num) => 0));
-            setInputArray(
-              [...Array(5)].map((num) => {
-                return {
-                  item: "",
-                  amount: 0,
-                  paidByIndex: -1,
-                  splitAmong: memberArray.map((name) => true),
-                  isEquallySplit: false,
-                  isInvalid: false,
-                  detail: memberArray.map((name) => 0),
-                };
-              })
-            );
-          }}
-        >
-          Clear table
-        </Button>
+        <Button onClick={handleClearTable}>Clear table</Button>
       </h2>
 
       <SummarySection

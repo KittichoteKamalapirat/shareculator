@@ -1,4 +1,4 @@
-import { Expense, Spender, Summary, ToPayAndPaid } from "./interface";
+import { Expense, Summary, ToPayAndPaid } from "./interface";
 
 export const summarizeToBySpender = (
   expenseArray: Expense[],
@@ -88,7 +88,6 @@ export const finalize = (
 
     //Lent a lot
     if (debtPlusLent < 0) {
-      console.log("lent alot");
       //remove borrower
 
       const prevDebt = toPayAndPaidArray[lenderIndex].debt; //- 385

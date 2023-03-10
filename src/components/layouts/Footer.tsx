@@ -1,11 +1,10 @@
+import GitHubIcon from "@mui/icons-material/GitHub";
+import GoogleIcon from "@mui/icons-material/Google";
+import LanguageIcon from "@mui/icons-material/Language";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import React from "react";
 import { Link } from "react-router-dom";
-import { AppContainer } from "./AppContainer";
 import { XCenter } from "./XCenter";
-import LanguageIcon from "@mui/icons-material/Language";
-import GoogleIcon from "@mui/icons-material/Google";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import GitHubIcon from "@mui/icons-material/GitHub";
 
 interface FooterProps {}
 
